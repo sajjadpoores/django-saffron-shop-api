@@ -24,3 +24,17 @@ class FormTest(TestCase):
         login_data = {'username': [1,'admin',3], 'password': {'name':'admin'}}
         form = LoginForm(data=login_data)
         self.assertEqual(form.is_valid(), True)
+
+
+class ViewTest(TestCase):
+    def test_login_view(self):
+        # GET TESTS
+        response = self.client.get('/account/login/')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/account/login')
+        self.assertEqual(response.status_code, 301)
+
+        # POST TESTS
+        # TODO: WRITE SIGNUP VIEW AND IT"S TEST THEN WRITE POST RELATED TESTS
+        
