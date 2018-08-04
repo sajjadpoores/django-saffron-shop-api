@@ -20,4 +20,4 @@ class CardItem(models.Model):
     create_time = models.DateTimeField(verbose_name='زمان ایجاد', blank=False, null=False, auto_now=True)
 
     def __str__(self):
-        return self.card + ' - ' + self.product.__str__()
+        return self.card.__str__() + ' - ' + self.product.__str__()
