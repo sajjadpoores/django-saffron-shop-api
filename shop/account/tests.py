@@ -1,9 +1,9 @@
 from django.test import TestCase
 from account.forms import LoginForm, SignupForm
 from account.models import Account, State, City
-# Create your tests here.
-class FormTest(TestCase):
 
+
+class FormTest(TestCase):
     def test_login_form_validation(self):
         login_data = {'username': 'admin', 'password': 'admin'}
         form = LoginForm(data=login_data)
@@ -101,6 +101,9 @@ class FormTest(TestCase):
 
 
 class ViewTest(TestCase):
+    def setUp(self):
+        state = State.objects.create(name='خراسان رضوی')
+        city = City.objects.create(name='مشهد', state=state)
 
     def test_signup_view(self):
         response = self.client.get('/account/signup/')
@@ -110,8 +113,6 @@ class ViewTest(TestCase):
         response = self.client.get('/account/signup')
         self.assertEqual(response.status_code, 301)
 
-        state = State.objects.create(name='خراسان رضوی')
-        city = City.objects.create(name='مشهد', state=state)
         signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
                        'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
                        'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
@@ -123,16 +124,14 @@ class ViewTest(TestCase):
         account = Account.objects.get(username='username')
         self.client.force_login(account)
         response = self.client.get('/account/signup/')
-        # TODO: CHECK STATUS_CODE BEING REDIRECT WHEN CREATED THE HOME PAGE
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
 
         response = self.client.post('/account/signup/', signup_data)
-        print(response.content)
-        # TODO: CHECK STATUS_CODE BEING REDIRECT WHEN CREATED THE HOME PAGE
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
 
-
+        self.client.logout()
 
     def test_login_view(self):
-        # GET TESTS
         response = self.client.get('/account/login/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'login.html')
@@ -140,7 +139,25 @@ class ViewTest(TestCase):
         response = self.client.get('/account/login')
         self.assertEqual(response.status_code, 301)
 
-        # POST TESTS
-        # TODO: WRITE SIGNUP VIEW AND IT"S TEST THEN WRITE POST RELATED TESTS
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
+                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@123'}
+        login_data = {'username': 'username', 'password': 'password@123'}
 
+        account_count = Account.objects.count()
+        response = self.client.post('/account/signup/', signup_data)
+        self.assertTrue(account_count+1, Account.objects.count())
+
+        response = self.client.post('/account/login/', login_data)
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'logged in', response.content)
+
+        response = self.client.get('/account/login/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'User is already logged in', response.content)
+
+        response = self.client.post('/account/login/', login_data)
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'User is already logged in', response.content)
 
