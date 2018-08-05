@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, SignupForm
 from .consts import states
 from .models import Account
-
+from django.shortcuts import get_object_or_404
 
 class LoginView(TemplateView):
 
@@ -17,7 +17,7 @@ class LoginView(TemplateView):
     def login_user_or_show_error(self, request, user, form):
         if user is not None:
                 login(request, user)
-                return HttpResponse('logged in')  # # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
+                return HttpResponse('logged in')   # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
         else:
             error = 'نام کاربری یا کلمه عبور اشتباه است.'
             return render(request, 'login.html', {'form': form, 'error': error})
@@ -72,31 +72,50 @@ class LogoutView(TemplateView):
         return HttpResponse("You have already logged out.")  # TODO: REDIRECT TO HOMEPAGE
 
 
+def user_is_permitted_to_view(request, id):
+    if request.user.is_authenticated and (request.user.id == id or request.user.is_staff):
+        return True
+    return False
+
+
+def get_account_or_404(id):
+    account = get_object_or_404(Account, pk=id)
+
+    return account
+
+
 class EditView(TemplateView):
 
-    def user_is_permitted_to_edit(self, request, id):
-        if request.user.is_authenticated and (request.user.id == id or request.user.is_staff):
-            return True
-        return False
-
     def get_account_return_form(self, request, id):
-        account = Account.objects.get(pk=id)
+        account = get_account_or_404(id)
+        if request.method == 'POST':
+            return SignupForm(request.POST, instance=account)
         return SignupForm(instance=account)
 
     def get(self, request, id, *args, **kwargs):
-        if self.user_is_permitted_to_edit(request, id):
+        if user_is_permitted_to_view(request, id):
             form = self.get_account_return_form(request, id)
             return render(request, 'edit.html', {'form': form, 'states': states})
 
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
 
     def post(self, request, id, *args, **kwargs):
-        if self.user_is_permitted_to_edit(request, id):
+        if user_is_permitted_to_view(request, id):
             form = self.get_account_return_form(request, id)
             if form.is_valid():
-                form.save()
+                account = form.save()
+                login(request, account)
                 return HttpResponse('account updated')  # TODO: REDIRECT USER TO HOME PAGE OR DETAIL PAGE?
             else:
                 return render(request, 'edit.html', {'form': form, 'states': states})
 
         return HttpResponse('You are not permitted to edit this account')  # TODO: REDIRECT USER TO HOME PAGE
+
+
+class DetailView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        if user_is_permitted_to_view(request, id):
+            account = get_account_or_404(id)
+            return render(request, 'detail.html', {'account': account})
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
