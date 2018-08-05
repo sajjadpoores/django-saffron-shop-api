@@ -50,6 +50,9 @@ class SignupView(TemplateView):
         return render(request, 'signup.html', {'form': form, 'states': states})
 
     def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated and not request.user.is_staff:
+            return HttpResponse('You are logged in, cant create account.') # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
+
         form = SignupForm(request.POST)
 
         if form.is_valid():

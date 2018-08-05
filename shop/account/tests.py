@@ -101,14 +101,46 @@ class FormTest(TestCase):
 
 
 class ViewTest(TestCase):
+
+    def test_signup_view(self):
+        response = self.client.get('/account/signup/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'signup.html')
+
+        response = self.client.get('/account/signup')
+        self.assertEqual(response.status_code, 301)
+
+        state = State.objects.create(name='خراسان رضوی')
+        city = City.objects.create(name='مشهد', state=state)
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
+                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@123'}
+        account_count = Account.objects.count()
+        response = self.client.post('/account/signup/', signup_data)
+        self.assertTrue(account_count+1, Account.objects.count())
+
+        account = Account.objects.get(username='username')
+        self.client.force_login(account)
+        response = self.client.get('/account/signup/')
+        # TODO: CHECK STATUS_CODE BEING REDIRECT WHEN CREATED THE HOME PAGE
+
+        response = self.client.post('/account/signup/', signup_data)
+        print(response.content)
+        # TODO: CHECK STATUS_CODE BEING REDIRECT WHEN CREATED THE HOME PAGE
+
+
+
     def test_login_view(self):
         # GET TESTS
         response = self.client.get('/account/login/')
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'login.html')
 
         response = self.client.get('/account/login')
         self.assertEqual(response.status_code, 301)
 
         # POST TESTS
         # TODO: WRITE SIGNUP VIEW AND IT"S TEST THEN WRITE POST RELATED TESTS
-        
+
+
