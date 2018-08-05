@@ -4,6 +4,8 @@ from django.views.generic import TemplateView
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, SignupForm
 from .consts import states
+from .models import Account
+
 
 class LoginView(TemplateView):
 
@@ -40,6 +42,7 @@ class LoginView(TemplateView):
 
 
 class SignupView(TemplateView):
+
     def check_user_login_status(self, request):
         if request.user.is_authenticated and not request.user.is_staff:
             return HttpResponse('You are logged in, cant create account.') # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
@@ -68,3 +71,32 @@ class LogoutView(TemplateView):
             return HttpResponse('You have successfully logged out.')  # TODO: REDIRECT USER TO HOMEPAGE OR LOGIN PAGE?!
         return HttpResponse("You have already logged out.")  # TODO: REDIRECT TO HOMEPAGE
 
+
+class EditView(TemplateView):
+
+    def user_is_permitted_to_edit(self, request, id):
+        if request.user.is_authenticated and (request.user.id == id or request.user.is_staff):
+            return True
+        return False
+
+    def get_account_return_form(self, request, id):
+        account = Account.objects.get(pk=id)
+        return SignupForm(instance=account)
+
+    def get(self, request, id, *args, **kwargs):
+        if self.user_is_permitted_to_edit(request, id):
+            form = self.get_account_return_form(request, id)
+            return render(request, 'edit.html', {'form': form, 'states': states})
+
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
+
+    def post(self, request, id, *args, **kwargs):
+        if self.user_is_permitted_to_edit(request, id):
+            form = self.get_account_return_form(request, id)
+            if form.is_valid():
+                form.save()
+                return HttpResponse('account updated')  # TODO: REDIRECT USER TO HOME PAGE OR DETAIL PAGE?
+            else:
+                return render(request, 'edit.html', {'form': form, 'states': states})
+
+        return HttpResponse('You are not permitted to edit this account')  # TODO: REDIRECT USER TO HOME PAGE

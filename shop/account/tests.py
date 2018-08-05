@@ -105,7 +105,30 @@ class ViewTest(TestCase):
         state = State.objects.create(name='خراسان رضوی')
         city = City.objects.create(name='مشهد', state=state)
 
-    def test_signup_view(self):
+    def login(self, login_data={'username': 'username', 'password': 'password@123'}):
+        response = self.client.get('/account/logout/')
+
+        response = self.client.post('/account/login/', login_data)
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'logged in', response.content)
+
+    def create_user_and_login(self, username='username'):
+        response = self.client.get('/account/logout/')
+
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': username,
+                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@123'}
+        login_data = {'username': username, 'password': 'password@123'}
+        account_count = Account.objects.count()
+        response = self.client.post('/account/signup/', signup_data)
+        self.assertTrue(account_count + 1, Account.objects.count())
+
+        self.login(login_data)
+
+        return login_data
+
+    def test_signup_view(self, username='username'):
         response = self.client.get('/account/signup/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'signup.html')
@@ -114,7 +137,7 @@ class ViewTest(TestCase):
         self.assertEqual(response.status_code, 301)
 
         signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
-                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': username,
                        'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
                        'password1': 'password@123', 'password2': 'password@123'}
         account_count = Account.objects.count()
@@ -139,19 +162,7 @@ class ViewTest(TestCase):
         response = self.client.get('/account/login')
         self.assertEqual(response.status_code, 301)
 
-        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
-                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
-                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
-                       'password1': 'password@123', 'password2': 'password@123'}
-        login_data = {'username': 'username', 'password': 'password@123'}
-
-        account_count = Account.objects.count()
-        response = self.client.post('/account/signup/', signup_data)
-        self.assertTrue(account_count+1, Account.objects.count())
-
-        response = self.client.post('/account/login/', login_data)
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'logged in', response.content)
+        login_data = self.create_user_and_login()
 
         response = self.client.get('/account/login/')
         # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
@@ -167,21 +178,44 @@ class ViewTest(TestCase):
         # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
         self.assertEqual(b'You have already logged out.', response.content)
 
-        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
-                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
-                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
-                       'password1': 'password@123', 'password2': 'password@123'}
-        login_data = {'username': 'username', 'password': 'password@123'}
-        account_count = Account.objects.count()
-        response = self.client.post('/account/signup/', signup_data)
-        self.assertTrue(account_count + 1, Account.objects.count())
+        login_data = self.create_user_and_login()
 
         response = self.client.post('/account/login/', login_data)
         # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'logged in', response.content)
+        self.assertEqual(b'User is already logged in', response.content)
         response = self.client.get('/account/logout/')
         self.assertEqual(b'You have successfully logged out.', response.content)
 
         response = self.client.get('/account/logout/')
         self.assertEqual(b'You have already logged out.', response.content)
 
+
+    def test_edit_view(self):
+        response = self.client.get('/account/1/edit/')
+        self.assertEqual(response.status_code, 200)
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login()
+
+        response = self.client.get('/account/1/edit/')
+        self.assertTemplateUsed(response, 'edit.html')
+
+        response = self.client.get('/account/2/edit/')
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login('username2')
+
+        response = self.client.get('/account/1/edit/')
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        response = self.client.get('/account/2/edit/')
+        self.assertTemplateUsed(response, 'edit.html')
+
+        account = Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+        response = self.client.get('/account/1/edit/')
+        self.assertTemplateUsed(response, 'edit.html')
+
+        response = self.client.get('/account/3/edit/')
+        self.assertTemplateUsed(response, 'edit.html')
