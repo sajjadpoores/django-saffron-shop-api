@@ -1,6 +1,6 @@
 from django.test import TestCase
-from account.forms import LoginForm
-from account.models import Account
+from account.forms import LoginForm, SignupForm
+from account.models import Account, State, City
 # Create your tests here.
 class FormTest(TestCase):
 
@@ -24,6 +24,80 @@ class FormTest(TestCase):
         login_data = {'username': [1,'admin',3], 'password': {'name':'admin'}}
         form = LoginForm(data=login_data)
         self.assertEqual(form.is_valid(), True)
+
+    def test_signup_form_validation(self):
+        state = State.objects.create(name='خراسان رضوی')
+        city = City.objects.create(name='مشهد', state=state)
+
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
+                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@123'}
+        form = SignupForm(data=signup_data)
+        self.assertTrue(form.is_valid())
+
+        signup_data = {'first_name': 1, 'last_name': 1, 'national_id': '0720500494',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 1,
+                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@123'}
+        form = SignupForm(data=signup_data)
+        self.assertTrue(form.is_valid())
+
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '072050049',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
+                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@123'}
+        form = SignupForm(data=signup_data)
+        self.assertFalse(form.is_valid())
+
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+                       'email': 'email@emailserver.', 'phone': '09121234567', 'username': 'username',
+                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@123'}
+        form = SignupForm(data=signup_data)
+        self.assertFalse(form.is_valid())
+
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+                       'email': 'email@emailserver.domain', 'phone': '0911234567', 'username': 'username',
+                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@123'}
+        form = SignupForm(data=signup_data)
+        self.assertFalse(form.is_valid())
+
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
+                       'post_code': '012346789', 'state': '1', 'city': '1', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@123'}
+        form = SignupForm(data=signup_data)
+        self.assertFalse(form.is_valid())
+
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
+                       'post_code': '0123456789', 'state': '1', 'city': '2', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@123'}
+        form = SignupForm(data=signup_data)
+        self.assertFalse(form.is_valid())
+
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
+                       'post_code': '0123456789', 'state': '2', 'city': '1', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@123'}
+        form = SignupForm(data=signup_data)
+        self.assertFalse(form.is_valid())
+
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
+                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
+                       'password1': 'password@123', 'password2': 'password@12'}
+        form = SignupForm(data=signup_data)
+        self.assertFalse(form.is_valid())
+
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+                       'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': 'username',
+                       'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
+                       'password1': '123abc', 'password2': '123abc'}
+        form = SignupForm(data=signup_data)
+        self.assertFalse(form.is_valid())
 
 
 class ViewTest(TestCase):

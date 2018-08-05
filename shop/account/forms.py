@@ -1,3 +1,4 @@
+import re
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import Account
@@ -10,7 +11,8 @@ class LoginForm(forms.Form):
 
 class SignupForm(UserCreationForm):
     class Meta:
-            fields = ['first_name', 'last_name', 'national_id', 'email', 'phone', 'username', 'post_code', 'state', 'city', 'address']
+            fields = ['first_name', 'last_name', 'national_id', 'email', 'phone', 'username', 'post_code', 'state',
+                      'city', 'address']
             model = Account
 
     error_messages = {

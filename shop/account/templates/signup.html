@@ -1,0 +1,74 @@
+<script>
+    var states = [
+    {% for state in states %}
+        {'name': '{{ state.name }}', 'cities': [
+        {% for city in state.Cities %}
+            {
+            'name': '{{city.name}}',
+            'value': {{city.value}},
+            },
+        {% endfor %}]},
+    {% endfor %}
+    ];
+
+    function setCity(){
+        var citySelect = document.getElementById('id_city');
+        while(citySelect.length > 0) // remove all options
+            citySelect.remove(citySelect.legnth -1);
+
+        var stateSelect = document.getElementById('id_state');
+        selectedStateId = parseInt(stateSelect.options[stateSelect.selectedIndex].value);
+
+        if(selectedStateId){
+            cities = states[selectedStateId - 1].cities;
+
+            for(var i=0; i<cities.length; ++i){
+                var option = document.createElement("option");
+                option.text = cities[i].name;
+                option.value = cities[i].value;
+                citySelect.add(option);
+            }
+        }
+        else{
+            var option = document.createElement("option");
+            option.text = "---------";
+            option.value = "";
+            citySelect.add(option);
+        }
+    }
+</script>
+<span class="error"> {{ error }} </span>
+<form action="" method="POST">
+    {% csrf_token %}
+
+    {% for field in form %}
+
+        {{ field.errors }}
+        {{ field.label_tag }}
+
+        {% if field.html_name == 'state' %}
+
+            <select name="state" required id="id_state" onchange="setCity()">
+                <option value="">---------</option>
+                {% for state in states %}
+                    <option value="{{ forloop.counter}}">{{ state.name }}</option>
+                {% endfor %}
+            </select>
+
+        {% elif field.html_name == 'city' %}
+
+            <select name="city" required id="id_city" onselect="">
+                <option value="">---------</option>
+            </select>
+
+        {% else %}
+            {{ field }}
+        {% endif %}
+        <br>
+        {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+    {% endfor %}
+    <input type="submit" value="ثبت نام">
+    <input type="reset" value="پاک کردن">
+</form>
