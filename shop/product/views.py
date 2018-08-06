@@ -63,3 +63,10 @@ class ListView(TemplateView):
     def get(self, request, *args, **kwargs):
         products = Product.objects.all()
         return render(request, 'product/list.html', {'products': products})
+
+
+class DetailView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        product = get_product_or_404(id)
+        return render(request, 'product/detail.html', {'product': product})

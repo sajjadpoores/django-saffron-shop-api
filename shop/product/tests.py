@@ -166,3 +166,23 @@ class ViewTest(TestCase):
         self.login({'username': 'admin', 'password': 'password@123'})
         response = self.client.get('/product/all/')
         self.assertTemplateUsed(response, 'product/list.html')
+
+    def test_detail_view(self):
+        response = self.client.get('/product/1/')
+        self.assertTemplateNotUsed(response, 'product/detail.html')
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+
+        photo_file = open('product/test_pic.jpg', 'rb')
+        post_data = {'name': 'product1', 'price': '12000', 'description': 'qweqwe', 'inventory': '111', 'category': '1',
+                     'photo': SimpleUploadedFile(photo_file.name, photo_file.read())}
+        self.client.post('/product/create/', post_data)
+        self.assertEqual(Product.objects.all().count(), 1)
+
+        response = self.client.get('/product/1/')
+        self.assertTemplateUsed(response, 'product/detail.html')
+
+        self.create_user_and_login()
+        response = self.client.get('/product/1/')
+        self.assertTemplateUsed(response, 'product/detail.html')
