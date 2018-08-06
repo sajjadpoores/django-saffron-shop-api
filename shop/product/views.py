@@ -52,7 +52,7 @@ class EditView(TemplateView):
 
             if form.is_valid():
                 form.save()
-                return HttpResponse('UPDATED')  # TODO: REDIRECT TO PRODUCT DETAIL
+                return HttpResponse('product is updated')  # TODO: REDIRECT TO PRODUCT DETAIL
 
             return render(request, 'product/edit.html', {'form': form})
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
@@ -70,3 +70,13 @@ class DetailView(TemplateView):
     def get(self, request, id, *args, **kwargs):
         product = get_product_or_404(id)
         return render(request, 'product/detail.html', {'product': product})
+
+
+class DeleteView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        if user_is_staff(request):
+            product = get_product_or_404(id)
+            product.delete()
+            return HttpResponse('Product is deleted!') # TODO: REDIRECT USER TO HOMEPAGE
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE

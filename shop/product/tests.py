@@ -186,3 +186,31 @@ class ViewTest(TestCase):
         self.create_user_and_login()
         response = self.client.get('/product/1/')
         self.assertTemplateUsed(response, 'product/detail.html')
+
+
+    def test_delete_view(self):
+        response = self.client.get('/product/1/delete/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login()
+        response = self.client.get('/product/1/delete/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+
+        response = self.client.get('/product/1/delete/')
+        #TODO: CHECK 404 NOT FOUND PAGE
+
+        photo_file = open('product/test_pic.jpg', 'rb')
+        post_data = {'name': 'product1', 'price': '12000', 'description': 'qweqwe', 'inventory': '111', 'category': '1',
+                     'photo': SimpleUploadedFile(photo_file.name, photo_file.read())}
+        self.client.post('/product/create/', post_data)
+        self.assertEqual(Product.objects.all().count(), 1)
+        photo_file.close()
+
+        response = self.client.get('/product/1/delete/')
+        self.assertEqual(b'Product is deleted!', response.content) #TODO: CHECK REDIRECTION
+
