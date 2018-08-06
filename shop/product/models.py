@@ -1,6 +1,7 @@
 from django.db import models
 from account.models import Account
-# Create your models here.
+
+
 class Category(models.Model):
     name = models.CharField(verbose_name='دسته', max_length=50, blank=False)
 
