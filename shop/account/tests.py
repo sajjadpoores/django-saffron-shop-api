@@ -131,7 +131,7 @@ class ViewTest(TestCase):
     def test_signup_view(self, username='username'):
         response = self.client.get('/account/signup/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'signup.html')
+        self.assertTemplateUsed(response, 'account/signup.html')
 
         response = self.client.get('/account/signup')
         self.assertEqual(response.status_code, 301)
@@ -157,7 +157,7 @@ class ViewTest(TestCase):
     def test_login_view(self):
         response = self.client.get('/account/login/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'login.html')
+        self.assertTemplateUsed(response, 'account/login.html')
 
         response = self.client.get('/account/login')
         self.assertEqual(response.status_code, 301)
@@ -198,7 +198,7 @@ class ViewTest(TestCase):
         self.create_user_and_login()
 
         response = self.client.get('/account/1/edit/')
-        self.assertTemplateUsed(response, 'edit.html')
+        self.assertTemplateUsed(response, 'account/edit.html')
         self.assertEqual(response.context['form'].instance.username, 'username')
 
         response = self.client.get('/account/2/edit/')
@@ -213,16 +213,16 @@ class ViewTest(TestCase):
 
         response = self.client.get('/account/2/edit/')
         # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertTemplateUsed(response, 'edit.html')
+        self.assertTemplateUsed(response, 'account/edit.html')
         self.assertEqual(response.context['form'].instance.username, 'username2')
 
         Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
         self.login({'username': 'admin', 'password': 'password@123'})
         response = self.client.get('/account/1/edit/')
-        self.assertTemplateUsed(response, 'edit.html')
+        self.assertTemplateUsed(response, 'account/edit.html')
 
         response = self.client.get('/account/3/edit/')
-        self.assertTemplateUsed(response, 'edit.html')
+        self.assertTemplateUsed(response, 'account/edit.html')
 
     def test_detail_view(self):
         response = self.client.get('/account/1/')
@@ -232,13 +232,13 @@ class ViewTest(TestCase):
 
         self.create_user_and_login()
         response = self.client.get('/account/1/')
-        self.assertTemplateUsed(response, 'detail.html')
+        self.assertTemplateUsed(response, 'account/detail.html')
         self.assertEqual('username', response.context['account'].username)
 
         self.create_user_and_login('username2')
 
         response = self.client.get('/account/2/')
-        self.assertTemplateUsed(response, 'detail.html')
+        self.assertTemplateUsed(response, 'account/detail.html')
         self.assertEqual('username2', response.context['account'].username)
 
         response = self.client.get('/account/1/')
@@ -249,15 +249,15 @@ class ViewTest(TestCase):
                                               is_staff=True)
         self.login({'username': 'admin', 'password': 'password@123'})
         response = self.client.get('/account/3/')
-        self.assertTemplateUsed(response, 'detail.html')
+        self.assertTemplateUsed(response, 'account/detail.html')
         self.assertEqual('admin', response.context['account'].username)
 
         response = self.client.get('/account/1/')
-        self.assertTemplateUsed(response, 'detail.html')
+        self.assertTemplateUsed(response, 'account/detail.html')
         self.assertEqual('username', response.context['account'].username)
 
         response = self.client.get('/account/4/') # TODO: CHECK REDIRECTION WHEN ERROR PAGE CREATED
-        self.assertTemplateNotUsed(response, 'detail.html')
+        self.assertTemplateNotUsed(response, 'account/detail.html')
 
     def test_list_view(self):
         response = self.client.get('/account/all/')
@@ -273,7 +273,7 @@ class ViewTest(TestCase):
         Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
         self.login({'username': 'admin', 'password': 'password@123'})
         response = self.client.get('/account/all/')
-        self.assertTemplateUsed('list.html')
+        self.assertTemplateUsed(response, 'account/list.html')
         self.assertEqual(Account.objects.get(pk=1), response.context['accounts'][0])
         self.assertEqual(Account.objects.get(pk=2), response.context['accounts'][1])
 

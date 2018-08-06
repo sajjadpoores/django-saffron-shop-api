@@ -107,7 +107,7 @@ class ViewTest(TestCase):
         self.login({'username': 'admin', 'password': 'password@123'})
 
         response = self.client.get('/product/create/')
-        self.assertTemplateUsed('create.html')
+        self.assertTemplateUsed('product/create.html')
 
         photo_file = open('product/test_pic.jpg', 'rb')
         post_data = {'name': 'product1', 'price': '12000', 'description': 'qweqwe', 'inventory': '111', 'category': '1',
@@ -115,3 +115,41 @@ class ViewTest(TestCase):
         response = self.client.post('/product/create/', post_data)
         self.assertEqual(Product.objects.all().count(), 1)
         photo_file.close()
+
+    def test_edit_view(self):
+        response = self.client.get('/product/1/edit/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login()
+        response = self.client.get('/product/1/edit/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+
+        response = self.client.get('/product/1/edit/')
+        self.assertTemplateNotUsed(response, 'product/edit.html')
+
+        photo_file = open('product/test_pic.jpg', 'rb')
+        post_data = {'name': 'product1', 'price': '12000', 'description': 'qweqwe', 'inventory': '111', 'category': '1',
+                     'photo': SimpleUploadedFile(photo_file.name, photo_file.read())}
+        response = self.client.post('/product/create/', post_data)
+        self.assertEqual(Product.objects.all().count(), 1)
+
+        response = self.client.get('/product/1/edit/')
+        self.assertTemplateUsed(response, 'product/edit.html')
+        photo_file.close()
+
+        post_data = {'name': 'product4'}
+        response = self.client.post('/product/1/edit/', post_data)
+        self.assertEqual(Product.objects.get(pk=1).name, 'product1')
+
+        post_data = {'name': 'product2', 'price': '12000', 'description': 'qweqwe', 'inventory': '111', 'category': '1'}
+        response = self.client.post('/product/1/edit/', post_data)
+        self.assertEqual(Product.objects.get(pk=1).name, 'product2')
+
+        post_data = {'name': 'product3', 'price': '12000', 'description': 'qweqwe', 'inventory': '111'}
+        response = self.client.post('/product/1/edit/', post_data)
+        self.assertEqual(Product.objects.get(pk=1).name, 'product2')

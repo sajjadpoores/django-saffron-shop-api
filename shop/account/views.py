@@ -23,14 +23,14 @@ class LoginView(TemplateView):
                 return HttpResponse('logged in')   # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
         else:
             error = 'نام کاربری یا کلمه عبور اشتباه است.'
-            return render(request, 'login.html', {'form': form, 'error': error})
+            return render(request, 'account/login.html', {'form': form, 'error': error})
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return HttpResponse('User is already logged in') # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
         
         form = LoginForm()
-        return render(request, 'login.html', {'form': form})
+        return render(request, 'account/login.html', {'form': form})
     
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -41,7 +41,7 @@ class LoginView(TemplateView):
             user = self.get_user_or_none(form)
             return self.login_user_or_show_error(request, user, form)
         else:
-            return render(request, 'login.html', {'form': form})
+            return render(request, 'account/login.html', {'form': form})
 
 
 class SignupView(TemplateView):
@@ -54,7 +54,7 @@ class SignupView(TemplateView):
     def get(self, request, *args, **kwargs):
         self.check_user_login_status(request)
         form = SignupForm()
-        return render(request, 'signup.html', {'form': form, 'states': states})
+        return render(request, 'account/signup.html', {'form': form, 'states': states})
 
     def post(self, request, *args, **kwargs):
         self.check_user_login_status(request)
@@ -64,7 +64,7 @@ class SignupView(TemplateView):
             form.save()
             return HttpResponse('signed up')  # TODO: REDIRECT TO LOGIN PAGE
         else:
-            return render(request, 'signup.html', {'form': form, 'states': states})
+            return render(request, 'account/signup.html', {'form': form, 'states': states})
 
 
 class LogoutView(TemplateView):
@@ -84,8 +84,7 @@ def user_is_permitted_to_view(request, id):
 
 def get_account_or_404(id):
     account = get_object_or_404(Account, pk=id)
-
-    return account
+    return account # TODO: REDIRECT TO ERROR PAGE
 
 
 class EditView(TemplateView):
@@ -100,7 +99,7 @@ class EditView(TemplateView):
     def get(self, request, id, *args, **kwargs):
         if user_is_permitted_to_view(request, id):
             form = self.get_account_return_form(request, id)
-            return render(request, 'edit.html', {'form': form, 'states': states})
+            return render(request, 'account/edit.html', {'form': form, 'states': states})
 
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
 
@@ -112,7 +111,7 @@ class EditView(TemplateView):
                 login(request, account)
                 return HttpResponse('account updated')  # TODO: REDIRECT USER TO HOME PAGE OR DETAIL PAGE?
             else:
-                return render(request, 'edit.html', {'form': form, 'states': states})
+                return render(request, 'account/edit.html', {'form': form, 'states': states})
 
         return HttpResponse('You are not permitted to edit this account')  # TODO: REDIRECT USER TO HOME PAGE
 
@@ -122,7 +121,7 @@ class DetailView(TemplateView):
     def get(self, request, id, *args, **kwargs):
         if user_is_permitted_to_view(request, id):
             account = get_account_or_404(id)
-            return render(request, 'detail.html', {'account': account})
+            return render(request, 'account/detail.html', {'account': account})
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
 
 
@@ -137,7 +136,7 @@ class ListView(TemplateView):
     def get(self, request, *args, **kwargs):
         if self.user_is_permitted_to_view_list(request):
             accounts = Account.objects.all()
-            return render(request, 'list.html', {'accounts': accounts})
+            return render(request, 'account/list.html', {'accounts': accounts})
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
 
 
