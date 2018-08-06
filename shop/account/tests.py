@@ -276,3 +276,57 @@ class ViewTest(TestCase):
         self.assertTemplateUsed('list.html')
         self.assertEqual(Account.objects.get(pk=1), response.context['accounts'][0])
         self.assertEqual(Account.objects.get(pk=2), response.context['accounts'][1])
+
+    def test_deactivate(self):
+        response = self.client.get('/account/1/deactivate/')
+        self.assertEqual(response.status_code, 200)
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login()
+        response = self.client.get('/account/1/deactivate/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login('username2')
+        response = self.client.get('/account/1/deactivate/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+        response = self.client.get('/account/2/deactivate/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'Account deactivated!', response.content)
+
+        response = self.client.get('/account/2/deactivate/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'Account is already deactivated!', response.content)
+
+    def test_activate(self):
+        response = self.client.get('/account/1/activate/')
+        self.assertEqual(response.status_code, 200)
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login()
+        response = self.client.get('/account/1/activate/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login('username2')
+        response = self.client.get('/account/1/activate/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+        response = self.client.get('/account/2/activate/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'Account is already activated!', response.content)
+
+        self.client.get('/account/2/deactivate/')
+        response = self.client.get('/account/2/activate/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'Account activated!', response.content)
+

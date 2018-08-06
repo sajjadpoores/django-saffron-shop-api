@@ -139,3 +139,29 @@ class ListView(TemplateView):
             accounts = Account.objects.all()
             return render(request, 'list.html', {'accounts': accounts})
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
+
+
+class DeactivateView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        if ListView.user_is_permitted_to_view_list(request):
+            account = get_account_or_404(id)
+            if account.is_active:
+                account.is_active = False
+                account.save()
+                return HttpResponse('Account deactivated!') # TODO: REDIRECT USER TO LAST VISITED PAGE
+            return HttpResponse('Account is already deactivated!')
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
+
+
+class ActivateView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        if ListView.user_is_permitted_to_view_list(request):
+            account = get_account_or_404(id)
+            if not account.is_active:
+                account.is_active = True
+                account.save()
+                return HttpResponse('Account activated!') # TODO: REDIRECT USER TO LAST VISITED PAGE
+            return HttpResponse('Account is already activated!')  # TODO: REDIRECT USER TO LAST VISITED PAGE
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
