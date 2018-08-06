@@ -56,3 +56,10 @@ class EditView(TemplateView):
 
             return render(request, 'product/edit.html', {'form': form})
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+class ListView(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        products = Product.objects.all()
+        return render(request, 'product/list.html', {'products': products})

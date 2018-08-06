@@ -153,3 +153,16 @@ class ViewTest(TestCase):
         post_data = {'name': 'product3', 'price': '12000', 'description': 'qweqwe', 'inventory': '111'}
         response = self.client.post('/product/1/edit/', post_data)
         self.assertEqual(Product.objects.get(pk=1).name, 'product2')
+
+    def test_list_view(self):
+        response = self.client.get('/product/all/')
+        self.assertTemplateUsed(response, 'product/list.html')
+
+        self.create_user_and_login()
+        response = self.client.get('/product/all/')
+        self.assertTemplateUsed(response, 'product/list.html')
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+        response = self.client.get('/product/all/')
+        self.assertTemplateUsed(response, 'product/list.html')

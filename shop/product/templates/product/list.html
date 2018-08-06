@@ -1,0 +1,17 @@
+<table style="width:100%" border="1">
+    <tr>
+        <th></th>
+        <th>نام محصول</th>
+        <th>قیمت</th>
+        <th>دسته</th>
+        <th>موجودی</th>
+    </tr>
+{% for product in products %}
+    <tr>
+        <th>{{ forloop.counter }}</th>
+        <th>{{ product.name }}</th>
+        <th>{{ product.price }}</th>
+        <th>{{ product.category }}</th>
+        <th>{{ product.inventory }}</th>
+    </tr>
+{% endfor %}
