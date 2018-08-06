@@ -7,14 +7,17 @@ from .consts import states
 from .models import Account
 from django.shortcuts import get_object_or_404
 
+
 class LoginView(TemplateView):
 
-    def get_user_or_none(self, form):
+    @staticmethod
+    def get_user_or_none(form):
         username = form.cleaned_data['username']
         password = form.cleaned_data['password']
         return authenticate(username=username, password=password)
 
-    def login_user_or_show_error(self, request, user, form):
+    @staticmethod
+    def login_user_or_show_error(request, user, form):
         if user is not None:
                 login(request, user)
                 return HttpResponse('logged in')   # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
@@ -43,7 +46,8 @@ class LoginView(TemplateView):
 
 class SignupView(TemplateView):
 
-    def check_user_login_status(self, request):
+    @staticmethod
+    def check_user_login_status(request):
         if request.user.is_authenticated and not request.user.is_staff:
             return HttpResponse('You are logged in, cant create account.') # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
 
@@ -86,7 +90,8 @@ def get_account_or_404(id):
 
 class EditView(TemplateView):
 
-    def get_account_return_form(self, request, id):
+    @staticmethod
+    def get_account_return_form(request, id):
         account = get_account_or_404(id)
         if request.method == 'POST':
             return SignupForm(request.POST, instance=account)
@@ -118,4 +123,19 @@ class DetailView(TemplateView):
         if user_is_permitted_to_view(request, id):
             account = get_account_or_404(id)
             return render(request, 'detail.html', {'account': account})
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
+
+
+class ListView(TemplateView):
+
+    @staticmethod
+    def user_is_permitted_to_view_list(request):
+        if request.user.is_authenticated and request.user.is_staff:
+            return True
+        return False
+
+    def get(self, request, *args, **kwargs):
+        if self.user_is_permitted_to_view_list(request):
+            accounts = Account.objects.all()
+            return render(request, 'list.html', {'accounts': accounts})
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE

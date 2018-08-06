@@ -216,7 +216,7 @@ class ViewTest(TestCase):
         self.assertTemplateUsed(response, 'edit.html')
         self.assertEqual(response.context['form'].instance.username, 'username2')
 
-        account = Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
         self.login({'username': 'admin', 'password': 'password@123'})
         response = self.client.get('/account/1/edit/')
         self.assertTemplateUsed(response, 'edit.html')
@@ -258,3 +258,21 @@ class ViewTest(TestCase):
 
         response = self.client.get('/account/4/') # TODO: CHECK REDIRECTION WHEN ERROR PAGE CREATED
         self.assertTemplateNotUsed(response, 'detail.html')
+
+    def test_list_view(self):
+        response = self.client.get('/account/all/')
+        self.assertEqual(response.status_code, 200)
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login()
+        response = self.client.get('/account/all/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+        response = self.client.get('/account/all/')
+        self.assertTemplateUsed('list.html')
+        self.assertEqual(Account.objects.get(pk=1), response.context['accounts'][0])
+        self.assertEqual(Account.objects.get(pk=2), response.context['accounts'][1])

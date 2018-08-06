@@ -1,0 +1,17 @@
+<table style="width:100%" border="1">
+    <tr>
+        <th></th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Username</th>
+        <th>Email</th>
+    </tr>
+{% for account in accounts %}
+    <tr>
+        <th>{{ forloop.counter }}</th>
+        <th>{{ account.first_name }}</th>
+        <th>{{ account.last_name }}</th>
+        <th>{{ account.username }}</th>
+        <th>{{ account.email }}</th>
+    </tr>
+{% endfor %}
