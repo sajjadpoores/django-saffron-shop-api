@@ -63,6 +63,9 @@ class FormTest(TestCase):
         photo_file.close()
 
     def test_category_create_form_validation(self):
+        post_data = {'name': ''}
+        form = CategoryForm(data=post_data)
+        self.assertFalse(form.is_valid())
         post_data = {'name': 'cat1'}
         form = CategoryForm(data=post_data)
         self.assertTrue(form.is_valid())

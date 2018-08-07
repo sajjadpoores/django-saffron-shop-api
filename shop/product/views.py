@@ -147,3 +147,10 @@ class CategoryDeleteView(TemplateView):
             category.delete()
             return HttpResponse('Category is deleted!') # TODO: REDIRECT USER TO HOMEPAGE
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+class CategoryProductsView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        products = Product.objects.all().filter(category=id)
+        return render(request, 'product/list.html', {'products': products})
