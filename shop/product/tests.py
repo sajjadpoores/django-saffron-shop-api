@@ -299,3 +299,22 @@ class ViewTest(TestCase):
 
         response = self.client.get('/product/category/2/')
         self.assertTemplateNotUsed(response, 'category/detail.html') #TODO: CHECK REDIRECTION TO ERROR PAGE
+
+    def test_category_delete_view(self):
+        response = self.client.get('/product/category/1/delete/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login()
+        response = self.client.get('/product/category/1/delete/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+
+        response = self.client.get('/product/2/category/delete/')
+        # TODO: CHECK 404 NOT FOUND PAGE
+
+        response = self.client.get('/product/category/1/delete/')
+        self.assertEqual(Category.objects.all().count(), 0)

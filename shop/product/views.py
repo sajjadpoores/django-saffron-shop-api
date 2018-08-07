@@ -137,3 +137,13 @@ class CategoryDetailView(TemplateView):
     def get(self, request, id, *args, **kwargs):
         category = get_category_or_404(id)
         return render(request, 'category/detail.html', {'category': category})
+
+
+class CategoryDeleteView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        if user_is_staff(request):
+            category = get_category_or_404(id)
+            category.delete()
+            return HttpResponse('Category is deleted!') # TODO: REDIRECT USER TO HOMEPAGE
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
