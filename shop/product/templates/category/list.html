@@ -1,0 +1,11 @@
+<table style="width:100%" border="1">
+    <tr>
+        <th></th>
+        <th>نام دسته</th>
+    </tr>
+{% for category in categories %}
+    <tr>
+        <th>{{ forloop.counter }}</th>
+        <th>{{ category.name }}</th>
+    </tr>
+{% endfor %}

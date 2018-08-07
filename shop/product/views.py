@@ -123,3 +123,10 @@ class CategoryEditView(TemplateView):
                 return HttpResponse('Category edited!')  # TODO: REDIRECT TO CATEGORY CREATE PAGE!
             return render(request, 'category/edit.html', {'form': form})
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+class CategoryListView(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        return render(request, 'category/list.html', {'categories': categories})

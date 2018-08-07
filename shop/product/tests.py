@@ -269,3 +269,16 @@ class ViewTest(TestCase):
 
         response = self.client.get('/product/category/2/edit/')
         self.assertTemplateNotUsed(response, 'category/edit.html') #TODO: CHECK REDIRECTION TO ERROR PAGE 404
+
+    def test_category_list_view(self):
+        response = self.client.get('/product/category/all/')
+        self.assertTemplateUsed(response, 'category/list.html')
+
+        self.create_user_and_login()
+        response = self.client.get('/product/category/all/')
+        self.assertTemplateUsed(response, 'category/list.html')
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+        response = self.client.get('/product/category/all/')
+        self.assertTemplateUsed(response, 'category/list.html')
