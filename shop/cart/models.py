@@ -4,7 +4,7 @@ from product.models import Product
 
 
 class Cart(models.Model):
-    client = models.ForeignKey(Account, on_delete=models.CASCADE, verbose_name='مشتری', blank=False, null=False)
+    client = models.ForeignKey(Account, on_delete=models.CASCADE, verbose_name='مشتری', blank=True, null=True, default=None)
     last_update = models.DateTimeField(verbose_name='آخرین آپدیت', blank=False, null=False, auto_now=True)
     is_payed = models.BooleanField(verbose_name='وضعیت پرداخت', default=False, blank=False)
     total = models.PositiveIntegerField(verbose_name='مجموع', default=0, blank=False, null=False)
