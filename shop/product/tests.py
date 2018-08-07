@@ -224,3 +224,22 @@ class ViewTest(TestCase):
         response = self.client.get('/product/1/delete/')
         self.assertEqual(b'Product is deleted!', response.content) #TODO: CHECK REDIRECTION
 
+    def test_create_category_view(self):
+        response = self.client.get('/product/category/create/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login()
+        response = self.client.get('/product/category/create/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+
+        response = self.client.get('/product/category/create/')
+        self.assertTemplateUsed(response, 'category/create.html')
+
+        post_data = {'name': 'cat1'}
+        response = self.client.post('/product/category/create/')
+        self.assertEqual(Category.objects.get(pk=1).name, 'cat1')
