@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.shortcuts import render, get_object_or_404
-from .forms import ProductForm
-from .models import Product
+from .forms import ProductForm, CategoryForm
+from .models import Product, Category
 
 
 def user_is_staff(request):
@@ -79,4 +79,21 @@ class DeleteView(TemplateView):
             product = get_product_or_404(id)
             product.delete()
             return HttpResponse('Product is deleted!') # TODO: REDIRECT USER TO HOMEPAGE
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+class CategoryCreateView(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        if user_is_staff(request):
+            form = CategoryForm()
+            return render(request, 'category/create.html', {'form': form})
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+    def post(self, request, *args, **kwargs):
+        if user_is_staff(request):
+            form = CategoryForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return HttpResponse('Category created!') # TODO: REDIRECT TO CATEGORY CREATE PAGE!
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE

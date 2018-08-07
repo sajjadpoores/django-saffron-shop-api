@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .forms import ProductForm
+from .forms import ProductForm, CategoryForm
 from .models import Category, Product
 from account.models import Account, State, City
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -61,6 +61,17 @@ class FormTest(TestCase):
         form = ProductForm(post_data, file_data)
         self.assertFalse(form.is_valid())
         photo_file.close()
+
+    def test_category_create_form_validation(self):
+        post_data = {'name': 'cat1'}
+        form = CategoryForm(data=post_data)
+        self.assertTrue(form.is_valid())
+
+        post_data = {'name': 1}
+        form = CategoryForm(data=post_data)
+        self.assertTrue(form.is_valid())
+        form.save()
+        self.assertEqual(Category.objects.get(pk=1).name, '1')
 
 
 class ViewTest(TestCase):
@@ -186,7 +197,6 @@ class ViewTest(TestCase):
         self.create_user_and_login()
         response = self.client.get('/product/1/')
         self.assertTemplateUsed(response, 'product/detail.html')
-
 
     def test_delete_view(self):
         response = self.client.get('/product/1/delete/')
