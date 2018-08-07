@@ -282,3 +282,20 @@ class ViewTest(TestCase):
         self.login({'username': 'admin', 'password': 'password@123'})
         response = self.client.get('/product/category/all/')
         self.assertTemplateUsed(response, 'category/list.html')
+
+    def test_category_detail_view(self):
+        response = self.client.get('/product/category/1/')
+        self.assertTemplateUsed(response, 'category/detail.html')
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+
+        response = self.client.get('/product/category/1/')
+        self.assertTemplateUsed(response, 'category/detail.html')
+
+        self.create_user_and_login()
+        response = self.client.get('/product/category/1/')
+        self.assertTemplateUsed(response, 'category/detail.html')
+
+        response = self.client.get('/product/category/2/')
+        self.assertTemplateNotUsed(response, 'category/detail.html') #TODO: CHECK REDIRECTION TO ERROR PAGE

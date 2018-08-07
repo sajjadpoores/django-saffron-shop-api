@@ -130,3 +130,10 @@ class CategoryListView(TemplateView):
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
         return render(request, 'category/list.html', {'categories': categories})
+
+
+class CategoryDetailView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        category = get_category_or_404(id)
+        return render(request, 'category/detail.html', {'category': category})
