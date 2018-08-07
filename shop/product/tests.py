@@ -240,6 +240,32 @@ class ViewTest(TestCase):
         response = self.client.get('/product/category/create/')
         self.assertTemplateUsed(response, 'category/create.html')
 
-        post_data = {'name': 'cat1'}
+        post_data = {'name': 'cat2'}
+        response = self.client.post('/product/category/create/', post_data)
+        self.assertEqual(Category.objects.get(pk=2).name, 'cat2')
+
         response = self.client.post('/product/category/create/')
-        self.assertEqual(Category.objects.get(pk=1).name, 'cat1')
+        self.assertTrue(b'field is required', response.context['form'].errors)
+
+    def test_edit_category_view(self):
+        response = self.client.get('/product/category/100/edit/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login()
+        response = self.client.get('/product/category/1/edit/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+
+        response = self.client.get('/product/category/1/edit/')
+        self.assertTemplateUsed(response, 'category/edit.html')
+
+        post_data = {'name': 'first_category'}
+        response = self.client.post('/product/category/1/edit/', post_data)
+        self.assertEqual(Category.objects.get(pk=1).name, 'first_category')
+
+        response = self.client.get('/product/category/2/edit/')
+        self.assertTemplateNotUsed(response, 'category/edit.html') #TODO: CHECK REDIRECTION TO ERROR PAGE 404

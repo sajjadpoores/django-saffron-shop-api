@@ -32,8 +32,8 @@ class CreateView(TemplateView):
 
 
 def get_product_or_404(id):
-    account = get_object_or_404(Product, pk=id) # TODO: REDITRECT TO ERROR PAGE
-    return account
+    product = get_object_or_404(Product, pk=id) # TODO: REDITRECT TO ERROR PAGE
+    return product
 
 
 class EditView(TemplateView):
@@ -96,4 +96,30 @@ class CategoryCreateView(TemplateView):
             if form.is_valid():
                 form.save()
                 return HttpResponse('Category created!') # TODO: REDIRECT TO CATEGORY CREATE PAGE!
+            return render(request, 'category/edit.html', {'form': form})
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+def get_category_or_404(id):
+    category = get_object_or_404(Category, pk=id) # TODO: REDITRECT TO ERROR PAGE
+    return category
+
+
+class CategoryEditView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        if user_is_staff(request):
+            category = get_category_or_404(id)
+            form = CategoryForm(instance=category)
+            return render(request, 'category/edit.html', {'form': form})
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+    def post(self, request, id, *args, **kwargs):
+        if user_is_staff(request):
+            category = get_category_or_404(id)
+            form = CategoryForm(request.POST, instance=category)
+            if form.is_valid():
+                form.save()
+                return HttpResponse('Category edited!')  # TODO: REDIRECT TO CATEGORY CREATE PAGE!
+            return render(request, 'category/edit.html', {'form': form})
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
