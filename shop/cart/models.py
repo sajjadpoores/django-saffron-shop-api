@@ -7,7 +7,7 @@ from product.models import Product
 class Cart(models.Model):
     client = models.ForeignKey(Account, on_delete=models.CASCADE, verbose_name='مشتری', blank=True, null=True,
                                default=None)
-    create_time = models.DateTimeField(verbose_name='آخرین آپدیت', blank=True, null=True)
+    create_time = models.DateTimeField(verbose_name='زمان ایجاد', blank=True, null=True)
     is_payed = models.BooleanField(verbose_name='وضعیت پرداخت', default=False, blank=False)
     total = models.PositiveIntegerField(verbose_name='مجموع', default=0, blank=True, null=False)
 

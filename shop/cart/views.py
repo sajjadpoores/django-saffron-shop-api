@@ -51,6 +51,29 @@ class CreateCartByGetForClient(TemplateView):
             account = get_account_or_404(account_id)
             cart = Cart(client= account)
             cart.save()
-            print(cart.client.first_name)
             return HttpResponse('Cart created!')  # TODO: REDIRECT TO HOMEPAGE
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+class AllCartsList(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        if user_is_staff(request):
+            carts = Cart.objects.all()
+            return render(request, 'cart/list.html', {'carts': carts})
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+def user_is_permitted_to_view(request, account_id):
+    if request.user.is_authenticated and (request.user.id == account_id or request.user.is_staff):
+        return True
+    return False
+
+
+class AllCartsOfAccount(TemplateView):
+    def get(self, request, account_id, *args, **kwargs):
+        if user_is_permitted_to_view(request, account_id):
+            account = get_account_or_404(account_id)
+            carts = Cart.objects.all().filter(client= account)
+            return render(request, 'cart/list.html', {'carts': carts})
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE

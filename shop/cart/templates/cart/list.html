@@ -1,0 +1,17 @@
+<table style="width:100%" border="1">
+    <tr>
+        <th></th>
+        <th>مشتری</th>
+        <th>زمان ایجاد</th>
+        <th>وضعیت پرداخت</th>
+        <th>مجموع</th>
+    </tr>
+{% for cart in carts %}
+    <tr>
+        <th>{{ forloop.counter }}</th>
+        <th>{{ cart.client.username }}</th>
+        <th>{{ cart.create_time }}</th>
+        <th>{{ cart.is_payed }}</th>
+        <th>{{ cart.total }}</th>
+    </tr>
+{% endfor %}
