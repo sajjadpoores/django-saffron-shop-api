@@ -35,7 +35,12 @@ def get_account_or_404(id):
     return account
 
 
-class CreateCartByGetForAnonymous(TemplateView):
+def get_cart_or_404(id):
+    cart = get_object_or_404(Cart, pk=id) # TODO: REDITRECT TO ERROR PAGE
+    return cart
+
+
+class CreateCartByGetForAnonymousView(TemplateView):
     def get(self, request, *args, **kwargs):
         if user_is_staff(request):
             cart = Cart()
@@ -44,18 +49,38 @@ class CreateCartByGetForAnonymous(TemplateView):
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
 
 
-class CreateCartByGetForClient(TemplateView):
+class CreateCartByGetForClientView(TemplateView):
 
     def get(self, request, account_id, *args, **kwargs):
         if user_is_staff(request):
             account = get_account_or_404(account_id)
-            cart = Cart(client= account)
+            cart = Cart(client=account)
             cart.save()
             return HttpResponse('Cart created!')  # TODO: REDIRECT TO HOMEPAGE
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
 
 
-class AllCartsList(TemplateView):
+class EditCartView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        if user_is_staff(request):
+            cart = get_cart_or_404(id)
+            form = CartForm(instance=cart)
+            return render(request, 'cart/edit.html', {'form': form})
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+    def post(self, request, id, *args, **kwargs):
+        cart = get_cart_or_404(id)
+        if user_is_staff(request):
+            form = CartForm(request.POST, instance=cart)
+            if form.is_valid():
+                form.save()
+                return HttpResponse('Cart updated!')  # TODO: REDIRECT TO HOMEPAGE
+            return render(request, 'cart/edit.html', {'form': form})
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+class AllCartsListView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         if user_is_staff(request):
@@ -70,7 +95,7 @@ def user_is_permitted_to_view(request, account_id):
     return False
 
 
-class AllCartsOfAccount(TemplateView):
+class AllCartsOfAccountView(TemplateView):
     def get(self, request, account_id, *args, **kwargs):
         if user_is_permitted_to_view(request, account_id):
             account = get_account_or_404(account_id)

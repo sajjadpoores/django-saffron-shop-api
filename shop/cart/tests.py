@@ -167,3 +167,32 @@ class ViewTest(TestCase):
 
         response = self.client.get('/cart/all/4/')  # TODO: CHECK REDIRECTION WHEN ERROR PAGE CREATED
         self.assertTemplateNotUsed(response, 'cart/list.html')
+
+    def test_edit_cart(self):
+        response = self.client.get('/cart/1/edit/')
+        self.assertEqual(response.status_code, 200)
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login()
+        response = self.client.get('/cart/1/edit/')
+        self.assertEqual(response.status_code, 200)
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        cart = Cart.objects.create()
+        account = Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123',
+                                              is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+        response = self.client.get('/cart/1/edit/')
+        self.assertTemplateUsed(response, 'cart/edit.html')
+
+        response = self.client.post('/cart/1/edit/', {'client': 1})
+
+        self.login({'username': 'username', 'password': 'password@123'})
+        response = self.client.get('/cart/1/edit/')
+        self.assertEqual(response.status_code, 200)
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        response = self.client.post('/cart/1/edit/', {'client': 1})
