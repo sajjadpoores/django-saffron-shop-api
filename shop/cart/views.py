@@ -117,3 +117,28 @@ class AddToCart(TemplateView):
             cart.save()
             return HttpResponse("product is now added to the cart!")
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+def get_cart_item_or_404(id):
+    cart_item = get_object_or_404(CartItem, pk=id) # TODO: REDITRECT TO ERROR PAGE
+    return cart_item
+
+
+class DeleteFromCart(TemplateView):
+    def get(self, request, id, pid, *args, **kwargs):
+        cart = get_cart_or_404(id)
+        cart_item = list(CartItem.objects.all().filter(cart=id, product__id=pid))
+
+        if len(cart_item):
+            cart_item = cart_item[0]
+        else:
+            return HttpResponse('product is not in cart')  # TODO: REDIRECT TO HOMEPAGE
+
+        if cart_belongs_to_user(request, cart) or user_is_staff(request):  # TODO: OR SESSION[CARTID] OF ANONYUSER == ID
+            if cart_item.cart == cart:
+                cart.total -= cart_item.count * cart_item.product.price
+                cart.save()
+                cart_item.delete()
+                return HttpResponse('product is now removed from cart!')  # TODO: REDIRECT TO HOMEPAGE
+            return HttpResponse('product is not in cart')  # TODO: REDIRECT TO HOMEPAGE
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
