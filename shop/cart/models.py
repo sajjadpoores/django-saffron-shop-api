@@ -12,7 +12,7 @@ class Cart(models.Model):
     total = models.PositiveIntegerField(verbose_name='مجموع', default=0, blank=True, null=False)
 
     def __str__(self):
-        return self.client.__str__() + ' - ' + str(self.last_update)
+        return self.client.__str__() + ' - ' + str(self.create_time)
 
     def save(self, *args, **kwargs):
         self.create_time = timezone.now()
@@ -20,7 +20,7 @@ class Cart(models.Model):
 
 
 class CartItem(models.Model):
-    card = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name='سبد خرید', blank=False, null=False)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name='سبد خرید', blank=False, null=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='محصول', blank=False, null=False)
     count = models.PositiveIntegerField(verbose_name='تعداد', default=1, blank=False, null=False)
     create_time = models.DateTimeField(verbose_name='زمان ایجاد', blank=False, null=False)
@@ -30,4 +30,4 @@ class CartItem(models.Model):
 
     def save(self, *args, **kwargs):
         self.create_time = timezone.now()
-        return super(Cart, self).save(*args, **kwargs)
+        return super(CartItem, self).save(*args, **kwargs)
