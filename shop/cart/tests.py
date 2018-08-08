@@ -185,6 +185,7 @@ class ViewTest(TestCase):
         cart = Cart.objects.create(client=Account.objects.get(pk=2))
         response = self.client.get('/cart/2/add/1/2/')
         self.assertEqual(CartItem.objects.all().count(), 2)
+        self.assertEqual(Cart.objects.get(pk=1).total, 20)
 
         cart = Cart.objects.create(client=Account.objects.get(pk=2))
         response = self.client.get('/cart/2/add/1/2/')

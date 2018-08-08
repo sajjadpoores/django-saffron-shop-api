@@ -113,5 +113,7 @@ class AddToCart(TemplateView):
             if not cart_item:
                 cart_item = CartItem(cart=cart, product=product, count=count)
             cart_item.save()
+            cart.total += count * product.price
+            cart.save()
             return HttpResponse("product is now added to the cart!")
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
