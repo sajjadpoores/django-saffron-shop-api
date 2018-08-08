@@ -1,7 +1,9 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView
 from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.views.generic import TemplateView
 from .forms import CartForm
+from .models import Cart
+from account.models import Account
 
 
 def user_is_staff(request):
@@ -25,4 +27,30 @@ class CreateView(TemplateView):
                 form.save()
                 return HttpResponse('Cart created!')  # TODO: REDIRECT TO HOMEPAGE
             return render(request, 'cart/create.html', {'form': form})
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+def get_account_or_404(id):
+    account = get_object_or_404(Account, pk=id) # TODO: REDITRECT TO ERROR PAGE
+    return account
+
+
+class CreateCartByGetForAnonymous(TemplateView):
+    def get(self, request, *args, **kwargs):
+        if user_is_staff(request):
+            cart = Cart()
+            cart.save()
+            return HttpResponse('Cart created!')  # TODO: REDIRECT TO HOMEPAGE
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+class CreateCartByGetForClient(TemplateView):
+
+    def get(self, request, account_id, *args, **kwargs):
+        if user_is_staff(request):
+            account = get_account_or_404(account_id)
+            cart = Cart(client= account)
+            cart.save()
+            print(cart.client.first_name)
+            return HttpResponse('Cart created!')  # TODO: REDIRECT TO HOMEPAGE
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
