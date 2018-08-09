@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.shortcuts import render, get_object_or_404
-from .forms import ProductForm, CategoryForm
+from .forms import ProductForm, CategoryForm, AddToCartForm
 from .models import Product, Category
 
 
@@ -62,6 +62,7 @@ class ListView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         products = Product.objects.all()
+
         return render(request, 'product/list.html', {'products': products})
 
 
@@ -69,7 +70,23 @@ class DetailView(TemplateView):
 
     def get(self, request, id, *args, **kwargs):
         product = get_product_or_404(id)
-        return render(request, 'product/detail.html', {'product': product})
+        form = AddToCartForm()
+        return render(request, 'product/detail.html', {'product': product, 'form': form})
+
+    def add_to_cart_return_message(self, request, form, id):
+        count = form.cleaned_data['count']
+        from cart.views import get_cartid, AddToCart
+        cart = get_cartid(request)
+        message = AddToCart.get(AddToCart, request, cart.id, id, count).content
+        return message
+
+    def post(self, request, id, *args, **kwargs):
+        product = get_product_or_404(id)
+        form = AddToCartForm(request.POST)
+        if form.is_valid():
+            message = self.add_to_cart_return_message(request, form, id)
+            return render(request, 'product/detail.html', {'product': product, 'form': form, 'message': message})
+        return render(request, 'product/detail.html', {'product': product, 'form': form})
 
 
 class DeleteView(TemplateView):

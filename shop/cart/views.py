@@ -6,6 +6,61 @@ from .models import Cart, CartItem
 from account.models import Account
 
 
+def create_new_cart_for_account(request):
+    cart = Cart(client=request.user)
+    return cart
+
+
+def check_and_get_account_cartid(request, cartid):
+    cart = get_cart_or_404(cartid)
+    if cart.client == request.user and not cart.is_payed:
+        return cart
+    else:
+        return create_new_cart_for_account(request)
+
+
+def get_cartid_of_account(request):
+    cartid = request.session.get('cartid', None)
+    if cartid is not None:
+        cart = check_and_get_account_cartid(request, cartid)
+        return cart
+    else:
+        return create_new_cart_for_account(request)
+
+
+def create_new_cart_for_anonymous():
+    cart = Cart()
+    return cart
+
+
+def check_and_get_anonymous_cartid(cartid):
+    cart = get_cart_or_404(cartid)
+    if cart.client is None:
+        return cart
+    else:
+        cart = Cart()
+        return cart
+
+
+def get_cartid_of_anonymous(request):
+    cartid = request.session.get('cartid', None)
+    if cartid is not None:
+        return check_and_get_anonymous_cartid(cartid)
+
+    else:
+        return create_new_cart_for_anonymous()
+
+
+def get_cartid(request):
+    if request.user.is_authenticated:
+        cart = get_cartid_of_account(request)
+    else:
+        cart = get_cartid_of_anonymous(request)
+    cart.save()
+    request.session['cartid'] = cart.id
+    return cart
+
+
 def user_is_staff(request):
     if request.user.is_authenticated and request.user.is_staff:
         return True
@@ -108,7 +163,8 @@ class AddToCart(TemplateView):
         cart = get_cart_or_404(id)
         product = get_product_or_404(pid)
 
-        if cart_belongs_to_user(request, cart) or user_is_staff(request): # TODO: OR SESSION[CARTID] OF ANONYUSER == ID
+        cartid_session = request.session.get('cartid', None)
+        if cart_belongs_to_user(request, cart) or user_is_staff(request) or cartid_session == id:
             cart_item = product_is_already_in_cart(cart, product, count)
             if not cart_item:
                 cart_item = CartItem(cart=cart, product=product, count=count)

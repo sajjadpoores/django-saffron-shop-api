@@ -2,6 +2,7 @@ from django.test import TestCase
 from .forms import ProductForm, CategoryForm
 from .models import Category, Product
 from account.models import Account, State, City
+from cart.models import Cart
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 
@@ -321,3 +322,26 @@ class ViewTest(TestCase):
 
         response = self.client.get('/product/category/1/delete/')
         self.assertEqual(Category.objects.all().count(), 0)
+
+    def test_add_to_cart(self):
+        post_data = {'count': 1}
+        response = self.client.post('/product/1/', data=post_data)
+        # TODO: CHECK 404 NOT FOUND PAGE
+
+        photo_file = open('product/test_pic.jpg', 'rb')
+        Product.objects.create(name='p1', price='100', description='test', inventory='10',
+                               category=Category.objects.get(pk=1),
+                               photo=SimpleUploadedFile(photo_file.name, photo_file.read()))
+        self.assertTrue(Product.objects.all().count(), 1)
+
+        post_data = {'count': 1}
+        response = self.client.post('/product/1/', data=post_data)
+        self.assertEqual(response.context['message'], b'product is now added to the cart!')
+        self.assertEqual(self.client.session['cartid'], 1)
+
+        self.create_user_and_login()
+        post_data = {'count': 3}
+        response = self.client.post('/product/1/', data=post_data)
+        self.assertEqual(response.context['message'], b'product is now added to the cart!')
+        self.assertEqual(self.client.session['cartid'], 2)
+        self.assertEqual(Cart.objects.get(pk=2).total, 300)

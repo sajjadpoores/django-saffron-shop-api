@@ -1,3 +1,5 @@
+{{ message }}
+<br>
  نام:
 {{ product.name }}
 <br>
@@ -12,3 +14,8 @@
 <br>
  تصویر:
 <a href="{{ product.photo.url }}"> {{ product.photo }} </a>
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="اضافه به سبد">
+</form>

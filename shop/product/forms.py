@@ -1,14 +1,20 @@
-from django.forms import ModelForm
+from django import forms
 from .models import Product, Category
 
 
-class ProductForm(ModelForm):
+class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'price', 'description', 'inventory', 'category', 'photo']
 
 
-class CategoryForm(ModelForm):
+class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['name']
+
+
+class AddToCartForm(forms.Form):
+    count = forms.IntegerField(label='تعداد', required=True, initial=0)
+
+
