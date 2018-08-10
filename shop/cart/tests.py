@@ -257,33 +257,25 @@ class ViewTest(TestCase):
         response = self.client.get('/cart/1/delete/1/')
         self.assertEqual(Cart.objects.get(pk=1).total, 0)
 
+    def test_delete_cart_view(self):
+        response = self.client.get('/cart/1/delete/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
 
+        self.create_user_and_login()
+        response = self.client.get('/cart/1/delete/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
 
-        # account = Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123',
-        #                                       is_staff=True)
-        # self.login({'username': 'admin', 'password': 'password@123'})
-        # category = Category.objects.create(name='c1')
-        # product = Product.objects.create(name='p1', category=category, price=10, description='text')
-        # cart = Cart.objects.create(client=Account.objects.get(pk=1))
-        #
-        # response = self.client.get('/cart/1/add/1/2/')
-        # self.assertEqual(CartItem.objects.all().count(), 1)
-        #
-        # self.create_user_and_login()
-        # response = self.client.get('/cart/1/add/1/2/')
-        # # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        # self.assertEqual(b'You are not permitted to visit this page', response.content)
-        #
-        # cart = Cart.objects.create(client=Account.objects.get(pk=2))
-        # response = self.client.get('/cart/2/add/1/2/')
-        # self.assertEqual(CartItem.objects.all().count(), 2)
-        # self.assertEqual(Cart.objects.get(pk=2).total, 20)
-        #
-        # cart = Cart.objects.create(client=Account.objects.get(pk=2))
-        # response = self.client.get('/cart/2/add/1/2/')
-        # self.assertEqual(CartItem.objects.get(pk=2).count, 4)
-        #
-        # self.login({'username': 'admin', 'password': 'password@123'})
-        # cart = Cart.objects.create(client=Account.objects.get(pk=2))
-        # response = self.client.get('/cart/2/add/1/2/')
-        # self.assertEqual(CartItem.objects.get(pk=2).count, 6)
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+
+        response = self.client.get('/cart/1/delete/')
+        # TODO: CHECK 404 NOT FOUND PAGE
+
+        Cart.objects.create()
+
+        self.assertEqual(Cart.objects.all().count(), 1)
+
+        response = self.client.get('/cart/1/delete/')
+        self.assertEqual(b'Cart is deleted!', response.content)  # TODO: CHECK REDIRECTION

@@ -165,6 +165,16 @@ def add_product_to_cart(cart, product, count):
     cart.save()
 
 
+class DeleteCartView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        if user_is_staff(request):
+            cart = get_cart_or_404(id)
+            cart.delete()
+            return HttpResponse('Cart is deleted!') # TODO: REDIRECT USER TO HOMEPAGE
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
 class AddToCartHasCount(TemplateView):
 
     def get(self, request, id, pid, count, *args, **kwargs):
