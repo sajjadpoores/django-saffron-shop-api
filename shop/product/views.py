@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.shortcuts import render, get_object_or_404
-from .forms import ProductForm, CategoryForm, AddToCartForm
+from .forms import ProductForm, CategoryForm, AddToCartForm, DeleteFromCartForm
 from .models import Product, Category
 
 
@@ -69,9 +69,24 @@ class ListView(TemplateView):
 class DetailView(TemplateView):
 
     def get(self, request, id, *args, **kwargs):
+        from cart.views import get_cartid
+        from cart.views import product_is_already_in_cart
+
         product = get_product_or_404(id)
-        form = AddToCartForm()
-        return render(request, 'product/detail.html', {'product': product, 'form': form})
+        cart = get_cartid(request)
+
+        forms = [AddToCartForm(initial={'pid': id, 'count': 0})]
+        submits = ['اضافه به سبد']
+        actions = ['/cart/' + str(cart.id) + '/add/' + str(id) + '/']
+        methods = ['POST']
+        if product_is_already_in_cart(cart, product, 0):
+            forms.append(DeleteFromCartForm())
+            submits.append('حذف از سبد')
+            actions.append('/cart/' + str(cart.id) + '/delete/' + str(id) + '/')
+            methods.append('GET')
+
+        return render(request, 'product/detail.html', {'product': product, 'forms': forms, 'submits': submits,
+                                                       'actions': actions, 'methods': methods})
 
     def add_to_cart_return_message(self, request, form, id):
         count = form.cleaned_data['count']

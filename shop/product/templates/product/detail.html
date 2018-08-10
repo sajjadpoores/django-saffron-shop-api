@@ -14,8 +14,13 @@
 <br>
  تصویر:
 <a href="{{ product.photo.url }}"> {{ product.photo }} </a>
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="اضافه به سبد">
-</form>
+
+{% for form in forms %}
+    <form action="{% cycle actions.0 actions.1 %}" method="{% cycle methods.0 methods.1 as method%}">
+        {% if method == 'POST' %}
+            {% csrf_token %}
+        {% endif %}
+        {{ form }}
+        <input type="submit" value="{% cycle submits.0 submits.1 %}">
+    </form>
+{% endfor %}

@@ -156,7 +156,16 @@ def product_is_already_in_cart(cart, product, count):
     return False
 
 
-class AddToCart(TemplateView):
+def add_product_to_cart(cart, product, count):
+    cart_item = product_is_already_in_cart(cart, product, count)
+    if not cart_item:
+        cart_item = CartItem(cart=cart, product=product, count=count)
+    cart_item.save()
+    cart.total += count * product.price
+    cart.save()
+
+
+class AddToCartHasCount(TemplateView):
 
     def get(self, request, id, pid, count, *args, **kwargs):
         from product.views import get_product_or_404
@@ -165,13 +174,30 @@ class AddToCart(TemplateView):
 
         cartid_session = request.session.get('cartid', None)
         if cart_belongs_to_user(request, cart) or user_is_staff(request) or cartid_session == id:
-            cart_item = product_is_already_in_cart(cart, product, count)
-            if not cart_item:
-                cart_item = CartItem(cart=cart, product=product, count=count)
-            cart_item.save()
-            cart.total += count * product.price
-            cart.save()
+            add_product_to_cart(cart, product, count)
             return HttpResponse("product is now added to the cart!")
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+class AddToCart(TemplateView):
+    def get(self, request, id, pid, *args, **kwargs):
+        return HttpResponse("this page does not support get request") #TODO REDIRECT TO ERROR PAGE
+
+    def post(self, request, id, pid, *args, **kwargs):
+        from product.views import get_product_or_404
+        from product.forms import AddToCartForm
+        cart = get_cart_or_404(id)
+        product = get_product_or_404(pid)
+        cartid_session = request.session.get('cartid', None)
+
+        if cart_belongs_to_user(request, cart) or user_is_staff(request) or cartid_session == id:
+            form = AddToCartForm(request.POST)
+            if form.is_valid():
+                count = form.cleaned_data['count']
+                add_product_to_cart(cart, product, count)
+                return HttpResponse("product is now added to the cart!") #TODO : REDIRECT TO PRODUCT DETAIL PAGE (OR PERVIUS PAGE)
+            return render(request, 'product/detail.html', {'forms': [form], 'submits': ['اضافه به سبذ'],
+                                                                                        'methods': ['POST']})
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
 
 

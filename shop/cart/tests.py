@@ -163,7 +163,7 @@ class ViewTest(TestCase):
 
         response = self.client.post('/cart/1/edit/', {'client': 1})
 
-    def test_add_to_cart(self):
+    def test_add_to_cart_has_count(self):
         response = self.client.get('/cart/1/add/1/2/')
         self.assertEqual(response.status_code, 404) #TODO: CHECK REDIRECT TO ERROR PAGE 404
 
@@ -229,3 +229,61 @@ class ViewTest(TestCase):
         response = self.client.get('/cart/2/add/1/2/')
         response = self.client.get('/cart/2/delete/1/')
         self.assertEqual(Cart.objects.get(pk=2).total, 0)
+
+    def test_add_to_cart(self):
+        response = self.client.get('/cart/1/add/1/')
+        self.assertEqual(response.status_code, 200)  # TODO: CHECK REDIRECT TO ERROR PAGE
+
+        account = Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123',
+                                              is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+        category = Category.objects.create(name='c1')
+        product = Product.objects.create(name='p1', category=category, price=10, description='text', photo='1')
+        response = self.client.get('/product/1/')
+        self.assertEqual(len(response.context['forms']), 1)
+
+        cart_item = CartItem.objects.create(product=Product.objects.get(pk=1), count=1, cart=Cart.objects.get(pk=1))
+        cart = Cart.objects.get(pk=1)
+        cart.total = 10
+        cart.save()
+
+        response = self.client.get('/product/1/')
+        self.assertEqual(len(response.context['forms']), 2)
+
+        post_data = {'count': 3}
+        response = self.client.post('/cart/1/add/1/', data=post_data)
+        self.assertEqual(Cart.objects.get(pk=1).total, 40)
+
+        response = self.client.get('/cart/1/delete/1/')
+        self.assertEqual(Cart.objects.get(pk=1).total, 0)
+
+
+
+        # account = Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123',
+        #                                       is_staff=True)
+        # self.login({'username': 'admin', 'password': 'password@123'})
+        # category = Category.objects.create(name='c1')
+        # product = Product.objects.create(name='p1', category=category, price=10, description='text')
+        # cart = Cart.objects.create(client=Account.objects.get(pk=1))
+        #
+        # response = self.client.get('/cart/1/add/1/2/')
+        # self.assertEqual(CartItem.objects.all().count(), 1)
+        #
+        # self.create_user_and_login()
+        # response = self.client.get('/cart/1/add/1/2/')
+        # # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        # self.assertEqual(b'You are not permitted to visit this page', response.content)
+        #
+        # cart = Cart.objects.create(client=Account.objects.get(pk=2))
+        # response = self.client.get('/cart/2/add/1/2/')
+        # self.assertEqual(CartItem.objects.all().count(), 2)
+        # self.assertEqual(Cart.objects.get(pk=2).total, 20)
+        #
+        # cart = Cart.objects.create(client=Account.objects.get(pk=2))
+        # response = self.client.get('/cart/2/add/1/2/')
+        # self.assertEqual(CartItem.objects.get(pk=2).count, 4)
+        #
+        # self.login({'username': 'admin', 'password': 'password@123'})
+        # cart = Cart.objects.create(client=Account.objects.get(pk=2))
+        # response = self.client.get('/cart/2/add/1/2/')
+        # self.assertEqual(CartItem.objects.get(pk=2).count, 6)
