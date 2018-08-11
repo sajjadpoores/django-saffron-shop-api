@@ -6,6 +6,7 @@ from .forms import LoginForm, SignupForm
 from .consts import states
 from .models import Account
 from django.shortcuts import get_object_or_404
+from cart.models import Cart
 
 
 class LoginView(TemplateView):
@@ -61,7 +62,12 @@ class SignupView(TemplateView):
         form = SignupForm(request.POST)
 
         if form.is_valid():
-            form.save()
+            account = form.save()
+            from cart.views import get_cartid
+            if not request.user.is_staff:
+                cart = get_cartid(request)
+                cart.client = account
+                cart.save()
             return HttpResponse('signed up')  # TODO: REDIRECT TO LOGIN PAGE
         else:
             return render(request, 'account/signup.html', {'form': form, 'states': states})

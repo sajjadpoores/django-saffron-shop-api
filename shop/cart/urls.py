@@ -1,9 +1,10 @@
 from django.urls import path
 from .views import CreateView, AllCartsListView, AllCartsOfAccountView, EditCartView, AddToCartHasCount, \
-    DeleteFromCart, AddToCart, DeleteCartView
+    DeleteFromCart, AddToCart, DeleteCartView, CartDetailView
 
 urlpatterns = [
     path('create/', CreateView.as_view()),
+    path('<int:id>/', CartDetailView.as_view()),
     path('<int:id>/edit/', EditCartView.as_view()),
     path('<int:id>/delete/', DeleteCartView.as_view()),
     path('all/', AllCartsListView.as_view()),

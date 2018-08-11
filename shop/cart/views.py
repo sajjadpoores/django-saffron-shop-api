@@ -124,7 +124,7 @@ class AllCartsListView(TemplateView):
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
 
 
-def user_is_permitted_to_view(request, account_id):
+def user_id_is_permitted_to_view(request, account_id):
     if request.user.is_authenticated and (request.user.id == account_id or request.user.is_staff):
         return True
     return False
@@ -133,7 +133,7 @@ def user_is_permitted_to_view(request, account_id):
 class AllCartsOfAccountView(TemplateView):
 
     def get(self, request, account_id, *args, **kwargs):
-        if user_is_permitted_to_view(request, account_id):
+        if user_id_is_permitted_to_view(request, account_id):
             account = get_account_or_404(account_id)
             carts = Cart.objects.all().filter(client= account)
             return render(request, 'cart/list.html', {'carts': carts})
@@ -163,6 +163,18 @@ def add_product_to_cart(cart, product, count):
     cart_item.save()
     cart.total += count * product.price
     cart.save()
+
+
+class CartDetailView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        cart = get_cart_or_404(id)
+
+        cartid_session = request.session.get('cartid', None)
+        if cart_belongs_to_user(request, cart) or user_is_staff(request) or cartid_session == id:
+            cart_items = CartItem.objects.all().filter(cart__id=id)
+            return render(request, 'cart/detail.html', {'cart_items': cart_items, 'cart': cart})
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
 
 
 class DeleteCartView(TemplateView):

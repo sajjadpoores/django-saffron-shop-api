@@ -279,3 +279,41 @@ class ViewTest(TestCase):
 
         response = self.client.get('/cart/1/delete/')
         self.assertEqual(b'Cart is deleted!', response.content)  # TODO: CHECK REDIRECTION
+
+    def test_cart_detail_view(self):
+        response = self.client.get('/cart/1/')
+        # TODO: CHECK REDIRECT TO ERROR PAGE (404)
+
+        category = Category.objects.create(name='c1')
+        product = Product.objects.create(name='p1', category=category, price=10, description='text', photo='1')
+
+        response = self.client.get('/product/1/')
+        post_data = {'count': 3}
+        response = self.client.post('/cart/1/add/1/', data=post_data)
+        self.assertEqual(Cart.objects.get(pk=1).total, 30)
+
+        response = self.client.get('/cart/1/')
+        self.assertEqual(response.context['cart'].total, 30)
+        self.assertTemplateUsed(response, 'cart/detail.html')
+
+        cart = Cart.objects.create()
+        cart_item = CartItem.objects.create(cart=cart, product=product, count=1)
+
+        response = self.client.get('/cart/2/')
+        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+        self.assertEqual(b'You are not permitted to visit this page', response.content)
+
+        self.create_user_and_login()
+        self.assertEqual(self.client.session['cartid'], 1)
+
+        Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
+        self.login({'username': 'admin', 'password': 'password@123'})
+
+        response = self.client.get('/cart/2/')
+        self.assertEqual(response.context['cart'].total, 0)
+        self.assertTemplateUsed(response, 'cart/detail.html')
+
+        self.login()
+        response = self.client.get('/cart/1/')
+        self.assertEqual(response.context['cart'].total, 30)
+        self.assertTemplateUsed(response, 'cart/detail.html')
