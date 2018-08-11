@@ -333,4 +333,31 @@ class ViewTest(TestCase):
         response = self.client.get('/product/category/1/delete/')
         self.assertEqual(Category.objects.all().count(), 0)
 
+    def test_search_view(self):
+        category = Category.objects.get(pk=1)
+        Product.objects.create(name='p1', category=category, price=10, description='text')
+        Product.objects.create(name='p2', category=category, price=10, description='text')
 
+        response = self.client.get('/product/p/search/')
+        self.assertEqual(response.context['products'].count(), 2)
+
+        response = self.client.get('/product/1/search/')
+        self.assertEqual(response.context['products'].count(), 1)
+
+    def test_search_in_category_view(self):
+        category = Category.objects.get(pk=1)
+        Product.objects.create(name='p1', category=category, price=10, description='text')
+        Product.objects.create(name='p2', category=category, price=10, description='text')
+
+        category = Category.objects.create(name='cat2')
+        Product.objects.create(name='p3', category=category, price=10, description='text')
+        Product.objects.create(name='p4', category=category, price=10, description='text')
+
+        response = self.client.get('/product/1/p/search/')
+        self.assertEqual(response.context['products'].count(), 2)
+
+        response = self.client.get('/product/2/p/search/')
+        self.assertEqual(response.context['products'].count(), 2)
+
+        response = self.client.get('/product/2/3/search/')
+        self.assertEqual(response.context['products'].count(), 1)

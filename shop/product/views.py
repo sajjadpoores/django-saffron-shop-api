@@ -186,3 +186,17 @@ class CategoryProductsView(TemplateView):
     def get(self, request, id, *args, **kwargs):
         products = Product.objects.all().filter(category=id)
         return render(request, 'product/list.html', {'products': products})
+
+
+class SearchView(TemplateView):
+
+    def get(self, request, search_string, *args, **kwargs):
+        products = Product.objects.all().filter(name__contains= search_string)
+        return render(request, 'product/list.html', {'products': products})
+
+
+class SearchInCategory(TemplateView):
+
+    def get(self, request, id, search_string, *args, **kwargs):
+        products = Product.objects.all().filter(category=id, name__contains= search_string)
+        return render(request, 'product/list.html', {'products': products})
