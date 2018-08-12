@@ -1,17 +1,85 @@
-<table style="width:100%" border="1">
-    <tr>
-        <th></th>
-        <th>نام محصول</th>
-        <th>قیمت</th>
-        <th>دسته</th>
-        <th>موجودی</th>
-    </tr>
-{% for product in products %}
-    <tr>
-        <th>{{ forloop.counter }}</th>
-        <th>{{ product.name }}</th>
-        <th>{{ product.price }}</th>
-        <th>{{ product.category }}</th>
-        <th>{{ product.inventory }}</th>
-    </tr>
-{% endfor %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block link %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/main.css' %}">
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/productlist.css' %}">
+{% endblock %}
+
+{% block title %}
+    فروشگاه دارنیا | محصولات
+{% endblock %}
+
+{% block nav_item %}
+    <li class="nav-item">
+        <a class="nav-link" href="/home/">صفحه اصلی</a>
+    </li>
+
+    {% if user.is_authenticated %}
+
+        <li class="nav-item">
+            <a class="nav-link" href="/account/{{user.id}}/">{{ user.first_name }} {{ user.last_name }}</a>
+        </li>
+    {% else %}
+
+        <li class="nav-item">
+            <a class="nav-link" href="/account/signup/">ثبت نام</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/account/login/">ورود</a>
+        </li>
+
+    {% endif %}
+
+    <li class="nav-item">
+        <a class="nav-link" href="/cart/{{ cartid }}/">سبد خرید</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="/product/all/">محصولات</a>
+    </li>
+{% endblock %}
+
+{% block section %}
+    <div class="container" id="search-section">
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="row justify-content-center">
+                <div class="col-8 col-lg-6">
+                    <input type="text" name="search" placeholder="{{ search_placeholder }}">
+                </div>
+                <div class="col-1 col-lg-2">
+                    <button type="submit" class="btn btn-success"><img src="{% static 'images/search-icon.png' %}"></button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+
+            {% for product in products %}
+                <div class="col-9 col-lg-3">
+                    <div class="box col-10 col-lg-10">
+                        <img class="img-fluid" src="{{ product.photo.url }}">
+                            <div class="row product-title">
+                                <div class="col-lg-6"><p>نام محصول:</p></div>
+                                <div class="col-lg-6"><span>{{ product.name }}</span></div>
+
+                                <div class="col-lg-6"><p>قیمت:</p></div>
+                                <div class="col-lg-6"><span>{{ product.price }} </span></div>
+                            </div>
+                        <div class="row">
+                            <div class="col-6 col-lg-6">
+                                <a class="btn btn-info" href="/product/{{product.id}}/"><span>مشاهده</span></a>
+                            </div>
+                            <div class="col-6 col-lg-6">
+                                <a class="btn btn-success" href="/cart/{{cartid}}/add/{{product.id}}/1/"><span>افزودن</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

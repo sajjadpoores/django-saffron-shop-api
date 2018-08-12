@@ -7,8 +7,9 @@
 
         <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/bootstrap.min.css' %}">
         <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/bootstrap-grid.min.css' %}">
-        {% block link %}
         <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/main.css' %}">
+        {% block link %}
+
         {% endblock %}
 
 
@@ -66,7 +67,7 @@
         </header>
         <section>
             {% block section %}
-
+                
             {% endblock %}
         </section>
         {% block footer %}

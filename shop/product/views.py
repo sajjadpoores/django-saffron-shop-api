@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.views.generic import TemplateView
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .forms import ProductForm, CategoryForm, AddToCartForm, DeleteFromCartForm
 from .models import Product, Category
 
@@ -62,8 +62,13 @@ class ListView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         products = Product.objects.all()
+        from cart.views import get_cartid
+        cart = get_cartid(request)
+        return render(request, 'product/list.html', {'products': products, 'cartid': cart.id})
 
-        return render(request, 'product/list.html', {'products': products})
+    def post(self, request, *args, **kwargs):
+        search_string = request.POST['search']
+        return redirect('/product/' + search_string + '/search/')
 
 
 class DetailView(TemplateView):
@@ -185,18 +190,24 @@ class CategoryProductsView(TemplateView):
 
     def get(self, request, id, *args, **kwargs):
         products = Product.objects.all().filter(category=id)
-        return render(request, 'product/list.html', {'products': products})
+        from cart.views import get_cartid
+        cart = get_cartid(request)
+        return render(request, 'product/list.html', {'products': products, 'cartid': cart.id})
 
 
 class SearchView(TemplateView):
 
     def get(self, request, search_string, *args, **kwargs):
         products = Product.objects.all().filter(name__contains= search_string)
-        return render(request, 'product/list.html', {'products': products})
+        from cart.views import get_cartid
+        cart = get_cartid(request)
+        return render(request, 'product/list.html', {'products': products, 'cartid': cart.id})
 
 
 class SearchInCategory(TemplateView):
 
     def get(self, request, id, search_string, *args, **kwargs):
         products = Product.objects.all().filter(category=id, name__contains= search_string)
-        return render(request, 'product/list.html', {'products': products})
+        from cart.views import get_cartid
+        cart = get_cartid(request)
+        return render(request, 'product/list.html', {'products': products, 'cartid': cart.id})
