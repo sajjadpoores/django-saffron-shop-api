@@ -1,0 +1,107 @@
+@font-face {
+    font-family: IRANYekan;
+    font-weight: normal;
+    src: url("../fonts/iran-yekan-regular.eot");
+    src: url("../fonts/iran-yekan-regular.eot?#iefix") format("embedded-opentype"), url("../fonts/iran-yekan-regular.woff2") format("woff2"), url("../fonts/iran-yekan-regular.woff") format("woff"), url("../fonts/iran-yekan-regular.ttf") format("truetype"), url("../fonts/iran-yekan-regular.svg#IRANYekan") format("svg");
+}
+body {
+    font-family: IRANYekan;
+    text-align: right;
+    background-color: rgb(235, 231, 238);
+}
+header, footer {
+    direction: rtl;
+}
+footer {
+    background-color: rgb(154, 132, 155);
+    padding: 30px;
+    font-size: 14px;
+    text-align: right;
+}
+#left-foot {
+    text-align: left;
+}
+#left-foot h3 {
+    font-size: 15px;
+    margin-top: 12px;
+}
+#head-upper {
+    background-color: rgb(241, 210, 247);
+}
+#icons {
+    margin-top: 12px;
+}
+header .container-fluid {
+    padding:15px;
+}
+#head-bottom {
+    background-color: rgb(184, 146, 219);
+}
+h1 {
+    font-weight: bold;
+    font-size:25px;
+    text-align: right;
+    padding: 12px;
+    color:rgb(71, 17, 69);
+}
+h2 {
+    font-size: 20px;
+}
+.navbar-nav li{
+    text-align: center;
+    font-size:14px;
+    font-weight: bold;
+    margin-left: 12px;
+}
+#slider {
+    padding: 30px;
+    margin-bottom: 20px; 
+    margin-top: 20px; 
+}
+#foot-upper {
+    background-color: grey;
+}
+p {
+    font-size:13px;
+    margin:2px;
+    font-weight: bold;
+}
+/* ///////////////////////////////////// */
+/* PAGE 2 */
+#search-section {
+    margin: 10px auto;
+    padding: 20px;
+}
+input {
+    border-radius: 10px;
+    font-size: 12px;
+    padding:10px;
+    border: 1px solid #999999;
+    width: 100%;
+}
+input:focus {
+    outline: none !important;
+    border: 1px solid rgb(0, 92, 128);
+    box-shadow: 0 0 6px #00a5ce;
+    border-radius: 10px;
+    color:black;
+}
+.btn {
+    border-radius: 10px;
+}
+.box {
+    background-color: rgba(185, 185, 185, 0.295);
+    border-radius: 20px;
+    padding: 20px;
+    margin: 10px;
+}
+.box p, span{
+    padding:1px;
+}
+.product-title {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+span {
+    font-size: 12px;
+}
