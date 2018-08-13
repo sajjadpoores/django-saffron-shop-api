@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import CreateView, AllCartsListView, AllCartsOfAccountView, EditCartView, AddToCartHasCount, \
-    DeleteFromCart, AddToCart, DeleteCartView, CartDetailView
+    DeleteFromCart, AddToCart, DeleteCartView, CartDetailView, PayView, VerifyView
 
 urlpatterns = [
     path('create/', CreateView.as_view()),
@@ -13,4 +13,7 @@ urlpatterns = [
     path('<int:id>/add/<int:pid>/<int:count>/', AddToCartHasCount.as_view()),
     path('<int:id>/add/<int:pid>/', AddToCart.as_view()),
     path('<int:id>/delete/<int:pid>/', DeleteFromCart.as_view()),
+
+    path('<int:id>/pay', PayView.as_view()),
+    path('<int:id>/verify/', VerifyView.as_view())
 ]

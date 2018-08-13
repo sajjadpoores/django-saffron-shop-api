@@ -201,13 +201,23 @@ class SearchView(TemplateView):
         products = Product.objects.all().filter(name__contains= search_string)
         from cart.views import get_cartid
         cart = get_cartid(request)
-        return render(request, 'product/list.html', {'products': products, 'cartid': cart.id})
+        return render(request, 'product/list.html',
+                      {'products': products, 'cartid': cart.id, 'search_string': search_string})
+
+    def post(self, request, *args, **kwargs):
+        search_string = request.POST['search']
+        return redirect('/product/' + search_string + '/search/')
 
 
 class SearchInCategory(TemplateView):
 
     def get(self, request, id, search_string, *args, **kwargs):
-        products = Product.objects.all().filter(category=id, name__contains= search_string)
+        products = Product.objects.all().filter(category=id, name__contains=search_string)
         from cart.views import get_cartid
         cart = get_cartid(request)
-        return render(request, 'product/list.html', {'products': products, 'cartid': cart.id})
+        return render(request, 'product/list.html',
+                      {'products': products, 'cartid': cart.id, 'search_string': search_string})
+
+    def post(self, request, *args, **kwargs):
+        search_string = request.POST['search']
+        return redirect('/product/' + search_string + '/search/')

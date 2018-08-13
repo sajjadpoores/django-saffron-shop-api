@@ -141,8 +141,8 @@ class AllCartsOfAccountView(TemplateView):
 
 
 def cart_belongs_to_user(request, cart):
-    account = cart.client
-    if account is not None and request.user.id == account.id:
+    cart_account = cart.client
+    if cart_account  is not None and request.user.id == cart_account .id:
         return True
     return False
 
@@ -246,3 +246,56 @@ class DeleteFromCart(TemplateView):
                 return HttpResponse('product is now removed from cart!')  # TODO: REDIRECT TO HOMEPAGE
             return HttpResponse('product is not in cart')  # TODO: REDIRECT TO HOMEPAGE
         return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+from zeep import Client
+from django.shortcuts import redirect
+MERCHANT = 'e3cdd5aa-9d9b-11e8-922d-000c295eb8fc'
+client = Client('https://www.zarinpal.com/pg/services/WebGate/wsdl')
+# amount = 1000  # Toman / Required
+description = "توضیحات مربوط به تراکنش را در این قسمت وارد کنید"  # Required
+email = 'email@example.com'  # Optional
+mobile = '09123456789'  # Optional
+
+
+class PayView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        cart = get_cart_or_404(id)
+        if cart_belongs_to_user(request, cart):
+            amount = cart.total
+            CallbackURL = 'http://localhost:8000/cart/' + str(id) + '/verify/'  # Important: need to edit for realy server.
+            result = client.service.PaymentRequest(MERCHANT, amount, description, email, mobile, CallbackURL)
+            if result.Status == 100:
+                return redirect('https://www.zarinpal.com/pg/StartPay/' + str(result.Authority))
+            else:
+                return HttpResponse('Error code: ' + str(result.Status))
+        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+
+
+def substract_cart_items_from_inventory(cart):
+    cart_items = CartItem.objects.all().filter(cart=cart)
+    for cart_item in cart_items:
+        product = cart_item.product
+        product.inventory -= cart_item.count
+        product.save()
+
+
+class VerifyView(TemplateView):
+
+    def get(self, request, id, *args, **kwargs):
+        if request.GET.get('Status') == 'OK':
+            cart = get_cart_or_404(id)
+            amount = cart.total
+            result = client.service.PaymentVerification(MERCHANT, request.GET['Authority'], amount)
+            if result.Status == 100:
+                substract_cart_items_from_inventory(cart)
+                cart.is_payed = True
+                cart.save()
+                return HttpResponse('Transaction success.\nRefID: ' + str(result.RefID))
+            elif result.Status == 101:
+                return HttpResponse('Transaction submitted : ' + str(result.Status))
+            else:
+                return HttpResponse('Transaction failed.\nStatus: ' + str(result.Status))
+        else:
+            return HttpResponse('Transaction failed or canceled by user')
