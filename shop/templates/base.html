@@ -47,18 +47,37 @@
                     <div class="collapse navbar-collapse" id="collapsibleNavbar">
                         <ul class="navbar-nav">
                             {% block nav_item %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="/home/">صفحه اصلی</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/account/signup/">ثبت نام</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/account/login/">ورود</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/product/all/">محصولات</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">صفحه اصلی</a>
+                                </li>
+
+                                {% if user.is_authenticated %}
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/account/{{user.id}}/">{{ user.first_name }} {{ user.last_name }}</a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/account/logout/">خروج</a>
+                                    </li>
+                                {% else %}
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/account/signup/">ثبت نام</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/account/login/">ورود</a>
+                                    </li>
+
+                                {% endif %}
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/cart/{{ cartid }}/">سبد خرید</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/product/all/">محصولات</a>
+                                </li>
                             {% endblock %}
                         </ul>
                     </div>
@@ -66,8 +85,21 @@
             </div>
         </header>
         <section>
+
+                <br>
+                {% if messages %}
+                    <div class="container">
+                        {% for message in messages %}
+                            <div class="alert alert-{% if message.tags == 'error' %}danger{%else%}{{ message.tags }}{%endif%} alert-dismissible text-center" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
             {% block section %}
-                
+
             {% endblock %}
         </section>
         {% block footer %}

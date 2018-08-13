@@ -1,12 +1,12 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.views.generic import TemplateView
 from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, SignupForm
 from .consts import states
 from .models import Account
 from django.shortcuts import get_object_or_404
-from cart.models import Cart
 
 
 class LoginView(TemplateView):
@@ -21,21 +21,24 @@ class LoginView(TemplateView):
     def login_user_or_show_error(request, user, form):
         if user is not None:
                 login(request, user)
-                return HttpResponse('logged in')   # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
+                messages.success(request, user.first_name + ' عزیز، خوش آمدید.')
+                return redirect('/home/')
         else:
             error = 'نام کاربری یا کلمه عبور اشتباه است.'
             return render(request, 'account/login.html', {'form': form, 'error': error})
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return HttpResponse('User is already logged in') # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
+            messages.warning(request, 'شما قبلا وارد شده اید')
+            return redirect('/home/')
         
         form = LoginForm()
         return render(request, 'account/login.html', {'form': form})
     
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return HttpResponse('User is already logged in') # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
+            messages.warning(request, 'شما قبلا وارد شده اید')
+            return redirect('/home/')
         
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -48,12 +51,15 @@ class LoginView(TemplateView):
 class SignupView(TemplateView):
 
     @staticmethod
-    def check_user_login_status(request):
+    def user_is_loggedin(request):
         if request.user.is_authenticated and not request.user.is_staff:
-            return HttpResponse('You are logged in, cant create account.') # TODO: SHOW MESSAGE AND REDIRECT TO HOMEPAGE
+            return True
+        return False
 
     def get(self, request, *args, **kwargs):
-        self.check_user_login_status(request)
+        if self.user_is_loggedin(request):
+            messages.warning(request, 'شما وارد شده اید.')
+            return redirect('/home/')
         form = SignupForm()
         return render(request, 'account/signup.html', {'form': form, 'states': states})
 
@@ -71,8 +77,8 @@ class SignupView(TemplateView):
 
                 login(request, account)
 
-                #TODO REDIRECT TO HOME
-            return HttpResponse('signed up')  # TODO: REDIRECT TO LOGIN PAGE
+            messages.success(request, account.first_name + ' عزیز، خوش آمدید.')
+            return redirect('/home/')
         else:
             return render(request, 'account/signup.html', {'form': form, 'states': states})
 
@@ -82,8 +88,10 @@ class LogoutView(TemplateView):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             logout(request)
-            return HttpResponse('You have successfully logged out.')  # TODO: REDIRECT USER TO HOMEPAGE OR LOGIN PAGE?!
-        return HttpResponse("You have already logged out.")  # TODO: REDIRECT TO HOMEPAGE
+            messages.success(request, 'شما با موفقیت خارج شدید.')
+            return redirect('/home/')
+        messages.warning(request, 'شما وارد حساب خود نیستید.')
+        return redirect('/home/')
 
 
 def user_is_permitted_to_view(request, id):
@@ -111,7 +119,8 @@ class EditView(TemplateView):
             form = self.get_account_return_form(request, id)
             return render(request, 'account/edit.html', {'form': form, 'states': states})
 
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
     def post(self, request, id, *args, **kwargs):
         if user_is_permitted_to_view(request, id):
@@ -119,11 +128,12 @@ class EditView(TemplateView):
             if form.is_valid():
                 account = form.save()
                 login(request, account)
-                return HttpResponse('account updated')  # TODO: REDIRECT USER TO HOME PAGE OR DETAIL PAGE?
+                return HttpResponse('account updated')  # TODO: REDIRECT USER TO DETAIL PAGE
             else:
                 return render(request, 'account/edit.html', {'form': form, 'states': states})
 
-        return HttpResponse('You are not permitted to edit this account')  # TODO: REDIRECT USER TO HOME PAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class DetailView(TemplateView):
@@ -132,7 +142,8 @@ class DetailView(TemplateView):
         if user_is_permitted_to_view(request, id):
             account = get_account_or_404(id)
             return render(request, 'account/detail.html', {'account': account})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class ListView(TemplateView):
@@ -147,7 +158,8 @@ class ListView(TemplateView):
         if self.user_is_permitted_to_view_list(request):
             accounts = Account.objects.all()
             return render(request, 'account/list.html', {'accounts': accounts})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class DeactivateView(TemplateView):
@@ -160,7 +172,8 @@ class DeactivateView(TemplateView):
                 account.save()
                 return HttpResponse('Account deactivated!') # TODO: REDIRECT USER TO LAST VISITED PAGE
             return HttpResponse('Account is already deactivated!')
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class ActivateView(TemplateView):
@@ -173,4 +186,5 @@ class ActivateView(TemplateView):
                 account.save()
                 return HttpResponse('Account activated!') # TODO: REDIRECT USER TO LAST VISITED PAGE
             return HttpResponse('Account is already activated!')  # TODO: REDIRECT USER TO LAST VISITED PAGE
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT USER TO HOME PAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')

@@ -4,42 +4,6 @@ from django.views.generic import TemplateView
 from .forms import CartForm
 from .models import Cart, CartItem
 from account.models import Account
-#
-#
-# def create_new_cart_for_account(request):
-#     cart = Cart(client=request.user)
-#     return cart
-#
-#
-# def check_and_get_account_cartid(request, cartid):
-#     cart = get_cart_or_404(cartid)
-#     if cart.client == request.user and not cart.is_payed:
-#         return cart
-#     else:
-#         return create_new_cart_for_account(request)
-#
-#
-# def cart_of_account(account):
-#     carts = Cart.objects.all().filter(client=account)
-#     if len(carts) > 0:
-#         for cart in carts:
-#             if not cart.is_payed:
-#                 return cart
-#     return False
-#
-#
-# def get_cartid_of_account(request):
-#     cartid = request.session.get('cartid', None)
-#     if cartid is not None:
-#         cart = check_and_get_account_cartid(request, cartid)
-#         return cart
-#     else:
-#         cart = cart_of_account(request.user)
-#         if cart:
-#             return cart
-#         return create_new_cart_for_account(request)
-#
-#
 
 
 def create_new_cart_for_anonymous():
@@ -87,7 +51,6 @@ def get_cartid(request):
     cart.save()
     request.session['cartid'] = cart.id
     return cart
-
 
 
 def user_is_staff(request):
