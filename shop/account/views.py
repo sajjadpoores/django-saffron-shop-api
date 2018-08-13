@@ -68,6 +68,10 @@ class SignupView(TemplateView):
                 cart = get_cartid(request)
                 cart.client = account
                 cart.save()
+
+                login(request, account)
+
+                #TODO REDIRECT TO HOME
             return HttpResponse('signed up')  # TODO: REDIRECT TO LOGIN PAGE
         else:
             return render(request, 'account/signup.html', {'form': form, 'states': states})
