@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.contrib import messages
 from django.views.generic import TemplateView
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import ProductForm, CategoryForm, AddToCartForm, DeleteFromCartForm
@@ -17,7 +18,8 @@ class CreateView(TemplateView):
         if user_is_staff(request):
             form = ProductForm()
             return render(request, 'product/create.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
     def post(self, request, *args, **kwargs):
         if user_is_staff(request):
@@ -28,7 +30,8 @@ class CreateView(TemplateView):
                 return HttpResponse('Product created!')
 
             return render(request, 'product/create.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 def get_product_or_404(id):
@@ -43,7 +46,8 @@ class EditView(TemplateView):
             product = get_product_or_404(id)
             form = ProductForm(instance=product)
             return render(request, 'product/edit.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
     def post(self, request, id, *args, **kwargs):
         if user_is_staff(request):
@@ -55,7 +59,8 @@ class EditView(TemplateView):
                 return HttpResponse('product is updated')  # TODO: REDIRECT TO PRODUCT DETAIL
 
             return render(request, 'product/edit.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class ListView(TemplateView):
@@ -115,8 +120,9 @@ class DeleteView(TemplateView):
         if user_is_staff(request):
             product = get_product_or_404(id)
             product.delete()
-            return HttpResponse('Product is deleted!') # TODO: REDIRECT USER TO HOMEPAGE
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+            return HttpResponse('Product is deleted!') # TODO: REDIRECT USER TO PRODUCT LIST
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class CategoryCreateView(TemplateView):
@@ -125,7 +131,8 @@ class CategoryCreateView(TemplateView):
         if user_is_staff(request):
             form = CategoryForm()
             return render(request, 'category/create.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
     def post(self, request, *args, **kwargs):
         if user_is_staff(request):
@@ -134,7 +141,8 @@ class CategoryCreateView(TemplateView):
                 form.save()
                 return HttpResponse('Category created!') # TODO: REDIRECT TO CATEGORY CREATE PAGE!
             return render(request, 'category/edit.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 def get_category_or_404(id):
@@ -149,7 +157,8 @@ class CategoryEditView(TemplateView):
             category = get_category_or_404(id)
             form = CategoryForm(instance=category)
             return render(request, 'category/edit.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
     def post(self, request, id, *args, **kwargs):
         if user_is_staff(request):
@@ -159,7 +168,8 @@ class CategoryEditView(TemplateView):
                 form.save()
                 return HttpResponse('Category edited!')  # TODO: REDIRECT TO CATEGORY CREATE PAGE!
             return render(request, 'category/edit.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class CategoryListView(TemplateView):
@@ -183,7 +193,8 @@ class CategoryDeleteView(TemplateView):
             category = get_category_or_404(id)
             category.delete()
             return HttpResponse('Category is deleted!') # TODO: REDIRECT USER TO HOMEPAGE
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class CategoryProductsView(TemplateView):
