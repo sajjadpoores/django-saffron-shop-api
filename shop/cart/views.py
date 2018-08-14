@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
+from django.contrib import messages
 from django.views.generic import TemplateView
 from .forms import CartForm
 from .models import Cart, CartItem
@@ -65,16 +66,18 @@ class CreateView(TemplateView):
         if user_is_staff(request):
             form = CartForm()
             return render(request, 'cart/create.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
     def post(self, request, *args, **kwargs):
         if user_is_staff(request):
             form = CartForm(request.POST)
             if form.is_valid():
                 form.save()
-                return HttpResponse('Cart created!')  # TODO: REDIRECT TO HOMEPAGE
+                return HttpResponse('Cart created!')  # TODO: REDIRECT TO CART LIST
             return render(request, 'cart/create.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 def get_account_or_404(id):
@@ -94,7 +97,8 @@ class EditCartView(TemplateView):
             cart = get_cart_or_404(id)
             form = CartForm(instance=cart)
             return render(request, 'cart/edit.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
     def post(self, request, id, *args, **kwargs):
         cart = get_cart_or_404(id)
@@ -104,7 +108,8 @@ class EditCartView(TemplateView):
                 form.save()
                 return HttpResponse('Cart updated!')  # TODO: REDIRECT TO HOMEPAGE
             return render(request, 'cart/edit.html', {'form': form})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class AllCartsListView(TemplateView):
@@ -113,7 +118,8 @@ class AllCartsListView(TemplateView):
         if user_is_staff(request):
             carts = Cart.objects.all()
             return render(request, 'cart/list.html', {'carts': carts})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 def user_id_is_permitted_to_view(request, account_id):
@@ -129,7 +135,8 @@ class AllCartsOfAccountView(TemplateView):
             account = get_account_or_404(account_id)
             carts = Cart.objects.all().filter(client= account)
             return render(request, 'cart/list.html', {'carts': carts})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 def cart_belongs_to_user(request, cart):
@@ -166,7 +173,8 @@ class CartDetailView(TemplateView):
         if cart_belongs_to_user(request, cart) or user_is_staff(request) or cartid_session == id:
             cart_items = CartItem.objects.all().filter(cart__id=id)
             return render(request, 'cart/detail.html', {'cart_items': cart_items, 'cart': cart})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class DeleteCartView(TemplateView):
@@ -176,7 +184,8 @@ class DeleteCartView(TemplateView):
             cart = get_cart_or_404(id)
             cart.delete()
             return HttpResponse('Cart is deleted!') # TODO: REDIRECT USER TO HOMEPAGE
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class AddToCartHasCount(TemplateView):
@@ -190,7 +199,8 @@ class AddToCartHasCount(TemplateView):
         if cart_belongs_to_user(request, cart) or user_is_staff(request) or cartid_session == id:
             add_product_to_cart(cart, product, count)
             return HttpResponse("product is now added to the cart!")
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 class AddToCart(TemplateView):
@@ -212,7 +222,8 @@ class AddToCart(TemplateView):
                 return HttpResponse("product is now added to the cart!") #TODO : REDIRECT TO PRODUCT DETAIL PAGE (OR PERVIUS PAGE)
             return render(request, 'product/detail.html', {'forms': [form], 'submits': ['اضافه به سبذ'],
                                                                                         'methods': ['POST']})
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 def get_cart_item_or_404(id):
@@ -237,7 +248,8 @@ class DeleteFromCart(TemplateView):
                 cart_item.delete()
                 return HttpResponse('product is now removed from cart!')  # TODO: REDIRECT TO HOMEPAGE
             return HttpResponse('product is not in cart')  # TODO: REDIRECT TO HOMEPAGE
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 from zeep import Client
@@ -262,7 +274,8 @@ class PayView(TemplateView):
                 return redirect('https://www.zarinpal.com/pg/StartPay/' + str(result.Authority))
             else:
                 return HttpResponse('Error code: ' + str(result.Status))
-        return HttpResponse('You are not permitted to visit this page')  # TODO: REDIRECT TO HOMEPAGE
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
 
 
 def substract_cart_items_from_inventory(cart):
@@ -281,9 +294,11 @@ class VerifyView(TemplateView):
             amount = cart.total
             result = client.service.PaymentVerification(MERCHANT, request.GET['Authority'], amount)
             if result.Status == 100:
+
                 substract_cart_items_from_inventory(cart)
                 cart.is_payed = True
                 cart.save()
+
                 return HttpResponse('Transaction success.\nRefID: ' + str(result.RefID))
             elif result.Status == 101:
                 return HttpResponse('Transaction submitted : ' + str(result.Status))
