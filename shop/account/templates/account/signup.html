@@ -102,7 +102,7 @@
 
                     <div class="row center-text" style="margin-top:10px;">
                         <div class="col-6"><input type="reset" class="btn btn-info" value="پاک کردن"></div>
-                        <div class="col-6"><input type="submit" class="btn btn-success" value="ورود"></div>
+                        <div class="col-6"><input type="submit" class="btn btn-success" value="ثبت"></div>
                     </div>
 
             </div>
@@ -110,38 +110,3 @@
     </form>
 </div>
 {% endblock %}
-<span class="error"> {{ error }} </span>
-<form action="" method="POST">
-    {% csrf_token %}
-
-    {% for field in form %}
-
-        {{ field.errors }}
-        {{ field.label_tag }}
-
-        {% if field.html_name == 'state' %}
-
-            <select name="state" required id="id_state" onchange="setCity()">
-                <option value="">---------</option>
-                {% for state in states %}
-                    <option value="{{ forloop.counter}}">{{ state.name }}</option>
-                {% endfor %}
-            </select>
-
-        {% elif field.html_name == 'city' %}
-
-            <select name="city" required id="id_city" onselect="">
-                <option value="">---------</option>
-            </select>
-
-        {% else %}
-            {{ field }}
-        {% endif %}
-        <br>
-        {% if field.help_text %}
-            <p class="help">{{ field.help_text|safe }}</p>
-        {% endif %}
-    {% endfor %}
-    <input type="submit" value="ثبت نام">
-    <input type="reset" value="پاک کردن">
-</form>

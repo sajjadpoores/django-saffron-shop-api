@@ -131,7 +131,9 @@ class EditView(TemplateView):
             if form.is_valid():
                 account = form.save()
                 login(request, account)
-                return HttpResponse('account updated')  # TODO: REDIRECT USER TO DETAIL PAGE
+
+                messages.success(request, 'پروفایل کاربر با موفقیت ویرایش شد.')
+                return redirect('/account/' + str(id) + '/')
             else:
                 return render(request, 'account/edit.html', {'form': form, 'states': states})
 
