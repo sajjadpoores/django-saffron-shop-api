@@ -85,7 +85,7 @@ class DetailView(TemplateView):
         product = get_product_or_404(id)
         cart = get_cartid(request)
 
-        forms = [AddToCartForm(initial={'pid': id, 'count': 0})]
+        forms = [AddToCartForm(initial={'pid': id, 'count': 1})]
         submits = ['اضافه به سبد']
         actions = ['/cart/' + str(cart.id) + '/add/' + str(id) + '/']
         methods = ['POST']
@@ -96,7 +96,7 @@ class DetailView(TemplateView):
             methods.append('GET')
 
         return render(request, 'product/detail.html', {'product': product, 'forms': forms, 'submits': submits,
-                                                       'actions': actions, 'methods': methods})
+                                                       'actions': actions, 'methods': methods, 'cartid': cart.id})
 
     def add_to_cart_return_message(self, request, form, id):
         count = form.cleaned_data['count']
@@ -106,12 +106,8 @@ class DetailView(TemplateView):
         return message
 
     def post(self, request, id, *args, **kwargs):
-        product = get_product_or_404(id)
-        form = AddToCartForm(request.POST)
-        if form.is_valid():
-            message = self.add_to_cart_return_message(request, form, id)
-            return render(request, 'product/detail.html', {'product': product, 'form': form, 'message': message})
-        return render(request, 'product/detail.html', {'product': product, 'form': form})
+        messages.success(request, 'این صفحه از درخواست POST پشتیبانی نمیکند.')
+        return redirect('/product/' + str(id) + '/')
 
 
 class DeleteView(TemplateView):

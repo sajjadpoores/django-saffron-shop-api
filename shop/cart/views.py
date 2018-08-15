@@ -7,6 +7,15 @@ from .models import Cart, CartItem
 from account.models import Account
 
 
+def get_redirect_path(request):
+    if request.POST.get('path'):
+        return request.POST.get('path')
+    elif request.GET.get('path'):
+        return request.GET.get('path')
+    else:
+        return '/home'
+
+
 def create_new_cart_for_anonymous():
     cart = Cart()
     return cart
@@ -218,10 +227,20 @@ class AddToCart(TemplateView):
             form = AddToCartForm(request.POST)
             if form.is_valid():
                 count = form.cleaned_data['count']
+
+                if count < 1:
+                    messages.error(request, 'تعداد باید یک یا بیشتر از یک باشد.')
+                    return redirect('/product/' + str(pid) + '/')
+
                 add_product_to_cart(cart, product, count)
-                return HttpResponse("product is now added to the cart!") #TODO : REDIRECT TO PRODUCT DETAIL PAGE (OR PERVIUS PAGE)
+                messages.success(request, 'محصول به سبد اضافه شد')
+
+                redirect_path = get_redirect_path(request)
+                return redirect(redirect_path)
+
             return render(request, 'product/detail.html', {'forms': [form], 'submits': ['اضافه به سبذ'],
-                                                                                        'methods': ['POST']})
+                                                           'methods': ['POST'], 'cartid': cart.id})
+
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -229,6 +248,9 @@ class AddToCart(TemplateView):
 def get_cart_item_or_404(id):
     cart_item = get_object_or_404(CartItem, pk=id) # TODO: REDITRECT TO ERROR PAGE
     return cart_item
+
+
+
 
 
 class DeleteFromCart(TemplateView):
@@ -239,15 +261,24 @@ class DeleteFromCart(TemplateView):
         if len(cart_item):
             cart_item = cart_item[0]
         else:
-            return HttpResponse('product is not in cart')  # TODO: REDIRECT TO HOMEPAGE
+            messages.error(request, 'محصول در سبد نیست')
+            redirect_path = get_redirect_path(request)
+            return redirect(redirect_path)
 
         if cart_belongs_to_user(request, cart) or user_is_staff(request):  # TODO: OR SESSION[CARTID] OF ANONYUSER == ID
             if cart_item.cart == cart:
                 cart.total -= cart_item.count * cart_item.product.price
                 cart.save()
                 cart_item.delete()
-                return HttpResponse('product is now removed from cart!')  # TODO: REDIRECT TO HOMEPAGE
-            return HttpResponse('product is not in cart')  # TODO: REDIRECT TO HOMEPAGE
+
+                messages.success(request, 'محصول از سبد حذف شد')
+                redirect_path = get_redirect_path(request)
+                return redirect(redirect_path)
+
+            messages.error(request, 'محصول در سبد نیست')
+            redirect_path = get_redirect_path(request)
+            return redirect(redirect_path)
+
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 

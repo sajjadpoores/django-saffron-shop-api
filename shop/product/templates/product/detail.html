@@ -1,26 +1,87 @@
-{{ message }}
-<br>
- نام:
-{{ product.name }}
-<br>
- قیمت:
-{{ product.price }}
-<br>
-دسته:
-{{ product.category }}
-<br>
- موجودی
-{{ product.inventory }}
-<br>
- تصویر:
-<a href="{{ product.photo.url }}"> {{ product.photo }} </a>
+{% extends 'base.html' %}
+{% load static %}
 
-{% for form in forms %}
-    <form action="{% cycle actions.0 actions.1 %}" method="{% cycle methods.0 methods.1 as method%}">
-        {% if method == 'POST' %}
-            {% csrf_token %}
-        {% endif %}
-        {{ form }}
-        <input type="submit" value="{% cycle submits.0 submits.1 %}">
-    </form>
-{% endfor %}
+{% block link %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/detail.css' %}">
+{% endblock %}
+
+{% block title %}
+    فروشگاه دارنیا | {{ product.name }}
+{% endblock %}
+
+{% block section %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="row">
+                <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/user-icon.png' %}"></div>
+                <div class="col-10 col-lg-11"><h2>مشخصات محصول</h2></div>
+            </div>
+            <hr>
+            <div class="row justify-content-center">
+                <div class="col-6 img-box" style="height:100%">
+                    <img class="img-fluid" src="{{ product.photo.url }}">
+                </div>
+            </div>
+            <hr>
+            <div class="row center-text" style="margin-top:10px;">
+                <div class="col-6"><label>نام محصول:</label></div>
+                <div class="col-6"><p>{{ product.name }}</p></div>
+            </div>
+            <hr>
+            <div class="row center-text" style="margin-top:10px;">
+                <div class="col-6"><label>قیمت:</label></div>
+                <div class="col-6"><p>{{ product.price }}</p></div>
+            </div>
+            <hr>
+            <div class="row center-text" style="margin-top:10px;">
+                <div class="col-6"><label>دسته:</label></div>
+                <div class="col-6"><p>{{ product.category }}</p></div>
+            </div>
+            <hr>
+            <div class="row center-text" style="margin-top:10px;">
+                <div class="col-6"><label>موجودی:</label></div>
+                <div class="col-6"><p>{{ product.inventory }}</p></div>
+            </div>
+            <hr>
+            <div class="row center-text" style="margin-top:10px;">
+                <div class="col-6"><label>توضیحات:</label></div>
+                <div class="col-6"><p>{{ product.description }}</p></div>
+            </div>
+            <hr>
+            <div class="row center-text" style="margin-top:10px;">
+                <div class="col-6">
+                    <label>تعداد:</label>
+                </div>
+
+                <form action="{{ actions.0 }}" method="{{ methods.0 }}">
+                    {% csrf_token %}
+                    {% for field in forms.0 %}
+                        <div class="col-3">{{ field }}</div>
+                    {% endfor %}
+                    <input type="hidden" name="path" value="{{ request.path }}">
+                    <div class="col-3"><input type="submit" class="btn btn-success" value="افزودن" style="margin-top:5px;"></div>
+                </form>
+            </div>
+            {% if forms.1 %}
+            <div class="row" style="margin-top:10px;">
+                <div class="col-6"></div>
+                <form action="{{ actions.1 }}" method="{{ methods.1 }}">
+                    <input type="hidden" name="path" value="{{ request.path }}">
+                    <div class="col-6"><input type="submit" class="btn btn-danger" value="حذف"></div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{{ message }}
+
+<form action="{% cycle actions.0 actions.1 %}" method="{% cycle methods.0 methods.1 as method%}">
+    {% if method == 'POST' %}
+        {% csrf_token %}
+    {% endif %}
+    {{ form }}
+    <input class="btn {% if method == 'POST' %} btn-success {% else %} btn-info {% endif %}" type="submit" value="{% cycle submits.0 submits.1 %}">
+</form>

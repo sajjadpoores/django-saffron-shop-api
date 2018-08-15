@@ -8,13 +8,14 @@
         <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/bootstrap.min.css' %}">
         <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/bootstrap-grid.min.css' %}">
         <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/main.css' %}">
-        {% block link %}
 
+        {% block link %}
         {% endblock %}
 
 
         <script src="{% static 'scripts/jquery-3.2.1.min.js' %}"></script>
         <script src="{% static 'scripts/bootstrap.min.js' %}"></script>
+
         {% block script %}
         {% endblock %}
 
@@ -48,7 +49,7 @@
                         <ul class="navbar-nav">
                             {% block nav_item %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">صفحه اصلی</a>
+                                    <a class="nav-link" href="{% if request.path == '/home/' %}#{% else %}/home/{% endif %}">صفحه اصلی</a>
                                 </li>
 
                                 {% if user.is_authenticated %}

@@ -144,7 +144,9 @@ class DetailView(TemplateView):
     def get(self, request, id, *args, **kwargs):
         if user_is_permitted_to_view(request, id):
             account = get_account_or_404(id)
-            return render(request, 'account/detail.html', {'account': account})
+            from cart.views import get_cartid
+            cart = get_cartid(request)
+            return render(request, 'account/detail.html', {'account': account, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 

@@ -15,7 +15,7 @@ class CategoryForm(forms.ModelForm):
 
 
 class AddToCartForm(forms.Form):
-    count = forms.IntegerField(label='تعداد', initial=0)
+    count = forms.IntegerField(label='تعداد', initial=1, min_value=1)
 
 
 class DeleteFromCartForm(forms.Form):
