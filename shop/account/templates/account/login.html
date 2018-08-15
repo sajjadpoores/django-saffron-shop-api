@@ -1,14 +1,49 @@
-<span class="error"> {{ error }} </span>
-<form action="" method="POST">
-    {% csrf_token %}
+{% extends 'base.html' %}
+{% load static %}
 
-    {% for field in form %}
-        {{ field.errors }}
-        {{ field.label_tag }} {{ field }} <br>
-        {% if field.help_text %}
-            <p class="help">{{ field.help_text|safe }}</p>
-        {% endif %}
-    {% endfor %}
+{% block link %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/form.css' %}">
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/detail.css' %}">
+{% endblock %}
 
-    <input type="submit" value="ورود">
-</form>
+{% block title %}
+    فروشگاه دارنیا | ورود
+{% endblock %}
+
+{% block section %}
+<div class="container">
+    <form action="" method="POST">
+        {% csrf_token %}
+
+        <div class="row justify-content-center">
+            <div class="col">
+                <div class="row">
+                    <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/user-plus-icon.png' %}"></div>
+                    <div class="col-10 col-lg-11"><h2>ورود</h2></div>
+                </div>
+                <hr>
+
+                {% for field in form %}
+                    {% if field.error %}
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-4"><label>خطا</label></div>
+                            <div class="col-8">{{ field.error }} </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="row" style="margin-top:10px;">
+                        <div class="col-4"><label>{{ field.label }}</label></div>
+                        <div class="col-8">{{ field }} </div>
+                    </div>
+                {% endfor %}
+
+                    <div class="row center-text" style="margin-top:10px;">
+                        <div class="col-6"><input type="reset" class="btn btn-info" value="پاک کردن"></div>
+                        <div class="col-6"><input type="submit" class="btn btn-success" value="ورود"></div>
+                    </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

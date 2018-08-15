@@ -24,8 +24,8 @@ class LoginView(TemplateView):
                 messages.success(request, user.first_name + ' عزیز، خوش آمدید.')
                 return redirect('/home/')
         else:
-            error = 'نام کاربری یا کلمه عبور اشتباه است.'
-            return render(request, 'account/login.html', {'form': form, 'error': error})
+            messages.error(request, 'نام کاربری یا کلمه عبور اشتباه است.')
+            return render(request, 'account/login.html', {'form': form})
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
