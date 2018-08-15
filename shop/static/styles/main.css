@@ -45,7 +45,8 @@ h1 {
     color:rgb(71, 17, 69);
 }
 h2 {
-    font-size: 20px;
+    font-size: 18px;
+    margin-top:3px;
 }
 .navbar-nav li{
     text-align: center;
@@ -64,5 +65,5 @@ h2 {
 p {
     font-size:13px;
     margin:2px;
-    font-weight: bold;
 }
+

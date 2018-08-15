@@ -255,7 +255,6 @@ class DeleteFromCart(TemplateView):
 from zeep import Client
 from django.shortcuts import redirect
 MERCHANT = 'e3cdd5aa-9d9b-11e8-922d-000c295eb8fc'
-client = Client('https://www.zarinpal.com/pg/services/WebGate/wsdl')
 # amount = 1000  # Toman / Required
 description = "توضیحات مربوط به تراکنش را در این قسمت وارد کنید"  # Required
 email = 'email@example.com'  # Optional
@@ -266,6 +265,7 @@ class PayView(TemplateView):
 
     def get(self, request, id, *args, **kwargs):
         cart = get_cart_or_404(id)
+        client = Client('https://www.zarinpal.com/pg/services/WebGate/wsdl')
         if cart_belongs_to_user(request, cart):
             amount = cart.total
             CallbackURL = 'http://localhost:8000/cart/' + str(id) + '/verify/'  # Important: need to edit for realy server.
@@ -289,6 +289,8 @@ def substract_cart_items_from_inventory(cart):
 class VerifyView(TemplateView):
 
     def get(self, request, id, *args, **kwargs):
+        client = Client('https://www.zarinpal.com/pg/services/WebGate/wsdl')
+
         if request.GET.get('Status') == 'OK':
             cart = get_cart_or_404(id)
             amount = cart.total

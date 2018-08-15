@@ -58,29 +58,32 @@ class SignupView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         if self.user_is_loggedin(request):
-            messages.warning(request, 'شما وارد شده اید.')
+            messages.warning(request, 'شما قبلا ثبت نام کرده اید.')
             return redirect('/home/')
         form = SignupForm()
         return render(request, 'account/signup.html', {'form': form, 'states': states})
 
     def post(self, request, *args, **kwargs):
-        self.check_user_login_status(request)
-        form = SignupForm(request.POST)
+        if not self.user_is_loggedin(request):
+            form = SignupForm(request.POST)
 
-        if form.is_valid():
-            account = form.save()
-            from cart.views import get_cartid
-            if not request.user.is_staff:
-                cart = get_cartid(request)
-                cart.client = account
-                cart.save()
+            if form.is_valid():
+                account = form.save()
+                from cart.views import get_cartid
+                if not request.user.is_staff:
+                    cart = get_cartid(request)
+                    cart.client = account
+                    cart.save()
 
-                login(request, account)
+                    login(request, account)
 
-            messages.success(request, account.first_name + ' عزیز، خوش آمدید.')
-            return redirect('/home/')
-        else:
-            return render(request, 'account/signup.html', {'form': form, 'states': states})
+                messages.success(request, account.first_name + ' عزیز، خوش آمدید.')
+                return redirect('/home/')
+            else:
+                return render(request, 'account/signup.html', {'form': form, 'states': states})
+
+        messages.warning(request, 'شما قبلا ثبت نام کرده اید.')
+        return redirect('/home/')
 
 
 class LogoutView(TemplateView):
@@ -170,8 +173,10 @@ class DeactivateView(TemplateView):
             if account.is_active:
                 account.is_active = False
                 account.save()
-                return HttpResponse('Account deactivated!') # TODO: REDIRECT USER TO LAST VISITED PAGE
-            return HttpResponse('Account is already deactivated!')
+                messages.success(request, 'حساب کاربر غیر فعال شد.')
+                return redirect('/account/' + str(id) + '/')
+            messages.error(request, 'حساب کاربر قبلا غیر فعال شده است.')
+            return redirect('/account/' + str(id) + '/')
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -184,7 +189,9 @@ class ActivateView(TemplateView):
             if not account.is_active:
                 account.is_active = True
                 account.save()
-                return HttpResponse('Account activated!') # TODO: REDIRECT USER TO LAST VISITED PAGE
-            return HttpResponse('Account is already activated!')  # TODO: REDIRECT USER TO LAST VISITED PAGE
+                messages.success(request, 'حساب کاربر فعال شد.')
+                return redirect('/account/' + str(id) + '/')
+            messages.error(request, 'حساب کاربر قبلا فعال شده است.')
+            return redirect('/account/' + str(id) + '/')
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')

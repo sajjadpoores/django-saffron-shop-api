@@ -1,0 +1,35 @@
+@media (min-width: 320px) {
+    .content {
+      max-width: 250px;
+    }
+}
+@media (min-width: 992px) {
+    .content {
+      max-width: 420px;
+    }
+}
+.content {
+    margin: 20px auto;
+    padding: 10px;
+    background-color: rgba(185, 185, 185, 0.295);
+    border-radius: 20px;
+}
+.icon {
+    width: 20px;
+    height: 18px;
+}
+hr { 
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+} 
+.center-text {
+    text-align: center;
+}
+label {
+    font-size: 13px;
+}

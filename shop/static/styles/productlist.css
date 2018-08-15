@@ -22,7 +22,8 @@ input:focus {
 .box {
     background-color: rgba(185, 185, 185, 0.295);
     border-radius: 20px;
-    padding: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
     margin: 10px;
 }
 .box p, span{
@@ -30,8 +31,24 @@ input:focus {
 }
 .product-title {
     padding-top: 15px;
-    padding-bottom: 15px;
+}
+.product-title p, label {
+    font-weight: bold;
+}
+.product-title input {
+    width: 80%;
+    height: 50%;
+    text-align: center;
+
 }
 span {
     font-size: 12px;
+}
+.img-box {
+    height:182px;
+}
+.img-box img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
