@@ -85,9 +85,6 @@
                 </nav>
             </div>
         </header>
-        <section class="content">
-
-                <br>
                 {% if messages %}
                     <div class="container">
                         {% for message in messages %}
@@ -98,11 +95,9 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-
             {% block section %}
 
             {% endblock %}
-        </section>
         {% block footer %}
         {% endblock %}
     </body>

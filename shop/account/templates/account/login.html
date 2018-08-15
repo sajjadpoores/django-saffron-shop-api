@@ -1,49 +1,46 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block link %}
-    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/form.css' %}">
-    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/detail.css' %}">
-{% endblock %}
-
 {% block title %}
     فروشگاه دارنیا | ورود
 {% endblock %}
 
 {% block section %}
-<div class="container">
-    <form action="" method="POST">
-        {% csrf_token %}
+<section class="content">
+    <div class="container">
+        <form action="" method="POST">
+            {% csrf_token %}
 
-        <div class="row justify-content-center">
-            <div class="col">
-                <div class="row">
-                    <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/user-plus-icon.png' %}"></div>
-                    <div class="col-10 col-lg-11"><h2>ورود</h2></div>
-                </div>
-                <hr>
+            <div class="row justify-content-center">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/user-plus-icon.png' %}"></div>
+                        <div class="col-10 col-lg-11"><h2>ورود</h2></div>
+                    </div>
+                    <hr>
 
-                {% for field in form %}
-                    {% if field.error %}
+                    {% for field in form %}
+                        {% if field.error %}
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-4"><label>خطا</label></div>
+                                <div class="col-8">{{ field.error }} </div>
+                            </div>
+                        {% endif %}
+
                         <div class="row" style="margin-top:10px;">
-                            <div class="col-4"><label>خطا</label></div>
-                            <div class="col-8">{{ field.error }} </div>
+                            <div class="col-4"><label>{{ field.label }}</label></div>
+                            <div class="col-8">{{ field }} </div>
                         </div>
-                    {% endif %}
+                    {% endfor %}
 
-                    <div class="row" style="margin-top:10px;">
-                        <div class="col-4"><label>{{ field.label }}</label></div>
-                        <div class="col-8">{{ field }} </div>
-                    </div>
-                {% endfor %}
+                        <div class="row center-text" style="margin-top:10px;">
+                            <div class="col-6"><button type="reset" class="btn btn-info">پاک کردن</button></div>
+                            <div class="col-6"><button type="submit" class="btn btn-success" >ورود</button></div>
+                        </div>
 
-                    <div class="row center-text" style="margin-top:10px;">
-                        <div class="col-6"><input type="reset" class="btn btn-info" value="پاک کردن"></div>
-                        <div class="col-6"><input type="submit" class="btn btn-success" value="ورود"></div>
-                    </div>
-
+                </div>
             </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+</section>
 {% endblock %}

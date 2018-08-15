@@ -2,14 +2,14 @@
 {% load static %}
 
 {% block link %}
-    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/productlist.css' %}">
+    {% comment %} <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/productlist.css' %}"> {% endcomment %}
 {% endblock %}
 
 {% block title %}
     فروشگاه دارنیا | محصولات
 {% endblock %}
 
-{% block section %}
+{% block section %}  
     <div class="container" id="search-section">
         <form method="POST" action="">
             {% csrf_token %}
@@ -28,8 +28,8 @@
         <div class="row justify-content-center">
 
             {% for product in products %}
-                <div class="col-9 col-lg-3">
-                        <div class="box col-10">
+                <div class="col-9 col-md-5 col-lg-3">
+                    <div class="box col-10 col-md-12 col-xl-12">
                             <div class="img-box">
                                 <img class="img-fluid" src="{{ product.photo.url }}">
                             </div>

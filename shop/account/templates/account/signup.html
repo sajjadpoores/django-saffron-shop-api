@@ -1,11 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block link %}
-    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/form.css' %}">
-    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/detail.css' %}">
-{% endblock %}
-
 {% block script %}
     <script>
         var states = [
@@ -53,60 +48,62 @@
 {% endblock %}
 
 {% block section %}
-<div class="container">
-    <form action="" method="POST">
-        {% csrf_token %}
+<section class="content">
+    <div class="container">
+        <form action="" method="POST">
+            {% csrf_token %}
 
-        <div class="row justify-content-center">
-            <div class="col">
-                <div class="row">
-                    <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/user-plus-icon.png' %}"></div>
-                    <div class="col-10 col-lg-11"><h2>ثبت نام</h2></div>
-                </div>
-                <hr>
-
-                {% for field in form %}
-                    {% if field.errors %}
-                        <div class="row" style="margin-top:10px;">
-                            <div class="col-4"><label></label></div>
-                            <div class="col-4 text-danger"><label>{{ field.errors.as_text }}</label></div>
-                        </div>
-                    {% endif %}
-
-                    {% if field.html_name == 'state' %}
-                        <div class="row" style="margin-top:10px;">
-                            <div class="col-4"><label>{{ field.label }}</label></div>
-                                <select name="state" required id="id_state" onchange="setCity()">
-                                    <option value="">---------</option>
-                                    {% for state in states %}
-                                        <option value="{{ forloop.counter}}">{{ state.name }}</option>
-                                    {% endfor %}
-                                </select>
-                        </div>
-
-                    {% elif field.html_name == 'city' %}
-                        <div class="row" style="margin-top:10px;">
-                            <div class="col-4"><label>{{ field.label }}</label></div>
-                            <select name="city" required id="id_city" onselect="">
-                                <option value="">---------</option>
-                            </select>
-                        </div>
-                    {% else %}
-                        <div class="row" style="margin-top:10px;">
-                            <div class="col-4"><label>{{ field.label }}</label></div>
-                            <div class="col-8">{{ field }} </div>
-                        </div>
-                    {% endif %}
-
-                {% endfor %}
-
-                    <div class="row center-text" style="margin-top:10px;">
-                        <div class="col-6"><input type="reset" class="btn btn-info" value="پاک کردن"></div>
-                        <div class="col-6"><input type="submit" class="btn btn-success" value="ثبت"></div>
+            <div class="row justify-content-center">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/user-plus-icon.png' %}"></div>
+                        <div class="col-10 col-lg-11"><h2>ثبت نام</h2></div>
                     </div>
+                    <hr>
 
+                    {% for field in form %}
+                        {% if field.errors %}
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-4"><label></label></div>
+                                <div class="col-4 text-danger"><label>{{ field.errors.as_text }}</label></div>
+                            </div>
+                        {% endif %}
+
+                        {% if field.html_name == 'state' %}
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-4"><label>{{ field.label }}</label></div>
+                                    <select class="col-8" name="state" required id="id_state" onchange="setCity()">
+                                        <option value="">---------</option>
+                                        {% for state in states %}
+                                            <option value="{{ forloop.counter}}">{{ state.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                            </div>
+
+                        {% elif field.html_name == 'city' %}
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-4"><label>{{ field.label }}</label></div>
+                                <select class="col-8" name="city" required id="id_city" onselect="">
+                                    <option value="">---------</option>
+                                </select>
+                            </div>
+                        {% else %}
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-4"><label>{{ field.label }}</label></div>
+                                <div class="col-8">{{ field }} </div>
+                            </div>
+                        {% endif %}
+
+                    {% endfor %}
+
+                        <div class="row center-text" style="margin-top:10px;">
+                            <div class="col-6"><button type="reset" class="btn btn-info">پاک کردن</button></div>
+                            <div class="col-6"><button type="submit" class="btn btn-success" >ثبت نام</button></div>
+                        </div>
+
+                </div>
             </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+</section>
 {% endblock %}

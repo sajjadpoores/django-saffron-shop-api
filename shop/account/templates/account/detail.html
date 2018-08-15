@@ -1,81 +1,79 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block link %}
-    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/detail.css' %}">
-{% endblock %}
-
 {% block title %}
     فروشگاه دارنیا | پروفایل
 {% endblock %}
 {% block section %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col">
-            <div class="row">
-                <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/user-icon.png' %}"></div>
-                <div class="col-10 col-lg-11"><h2>پروفایل کاربر</h2></div>
-            </div>
-            <hr>
-            <div class="row center-text" style="margin-top:10px;">
-                <div class="col-6"><label>نام:</label></div>
-                <div class="col-6"><p>{{ account.first_name }}</p></div>
-            </div>
-            <hr>
-            <div class="row center-text" style="margin-top:10px;">
-                <div class="col-6"><label>نام خانوادگی:</label></div>
-                <div class="col-6"><p>{{ account.last_name }}</p></div>
-            </div>
-            <hr>
-            <div class="row center-text" style="margin-top:10px;">
-                <div class="col-6"><label>شماره ملی:</label></div>
-                <div class="col-6"><p>{{ account.national_id }}</p></div>
-            </div>
-            <hr>
-            <div class="row center-text" style="margin-top:10px;">
-                <div class="col-6"><label>تلفن همراه:</label></div>
-                <div class="col-6"><p>{{ account.phone }}</p></div>
-            </div>
-            <hr>
-            <div class="row center-text" style="margin-top:10px;">
-                <div class="col-6"><label>ایمیل:</label></div>
-                <div class="col-6"><p>{{ account.email }}</p></div>
-            </div>
-            <hr>
-            <div class="row center-text" style="margin-top:10px;">
-                <div class="col-6"><label>نام کاربری</label></div>
-                <div class="col-6"><p>{{ account.username }}</p></div>
-            </div>
-            <hr>
-            <div class="row center-text" style="margin-top:10px;">
-                <div class="col-6"><label>استان:</label></div>
-                <div class="col-6"><p>{{ account.state }}</p></div>
-            </div>
-            <hr>
-            <div class="row center-text" style="margin-top:10px;">
-                <div class="col-6"><label>شهر:</label></div>
-                <div class="col-6"><p>{{ account.city }}</p></div>
-            </div>
-            <hr>
-            <div class="row center-text" style="margin-top:10px;">
-                <div class="col-6"><label>کد پستی:</label></div>
-                <div class="col-6"><p>{{ account.post_code }}</p></div>
-            </div>
-            <hr>
-            <div class="row center-text" style="margin-top:10px;">
-                <div class="col-6"><label>آدرس:</label></div>
-                <div class="col-6"><p>{{ account.address}}</p></div>
-            </div>
-            <hr>
-            <div class="row center-text" style="margin-top:10px;">
-                <div class="col-6"><form action="/account/{{account.id}}/edit/"><input type="submit" class="btn btn-info" value="ویرایش اطلاعات"></input></form></div>
-                    {% if account.is_active %}
-                        <div class="col-6"><form action="/account/{{account.id}}/deactivate/"><input type="submit" class="btn btn-danger" value="غیر فعال سازی"></input></form></div>
-                    {% else %}
-                        <div class="col-6"><form action="/account/{{account.id}}/activate/"><input type="submit" class="btn btn-success" value="فعالسازی"></input></form></div>
-                    {% endif %}
+<section class="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col">
+                <div class="row">
+                    <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/user-icon.png' %}"></div>
+                    <div class="col-10 col-lg-11"><h2>پروفایل کاربر</h2></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><label>نام:</label></div>
+                    <div class="col-6"><p>{{ account.first_name }}</p></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><label>نام خانوادگی:</label></div>
+                    <div class="col-6"><p>{{ account.last_name }}</p></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><label>شماره ملی:</label></div>
+                    <div class="col-6"><p>{{ account.national_id }}</p></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><label>تلفن همراه:</label></div>
+                    <div class="col-6"><p>{{ account.phone }}</p></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><label>ایمیل:</label></div>
+                    <div class="col-6"><p>{{ account.email }}</p></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><label>نام کاربری</label></div>
+                    <div class="col-6"><p>{{ account.username }}</p></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><label>استان:</label></div>
+                    <div class="col-6"><p>{{ account.state }}</p></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><label>شهر:</label></div>
+                    <div class="col-6"><p>{{ account.city }}</p></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><label>کد پستی:</label></div>
+                    <div class="col-6"><p>{{ account.post_code }}</p></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><label>آدرس:</label></div>
+                    <div class="col-6"><p>{{ account.address}}</p></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><form action="/account/{{account.id}}/edit/"><button type="submit" class="btn btn-info">ویرایش اطلاعات</button></form></div>
+                        {% if account.is_active %}
+                            <div class="col-6"><form action="/account/{{account.id}}/deactivate/"><button type="submit" class="btn btn-danger">غیر فعال سازی</button></form></div>
+                        {% else %}
+                            <div class="col-6"><form action="/account/{{account.id}}/activate/"><button type="submit" class="btn btn-danger">فعال سازی</button></form></div>
+                        {% endif %}
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

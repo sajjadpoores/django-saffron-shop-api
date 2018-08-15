@@ -27,6 +27,9 @@ class CreateView(TemplateView):
 
             if form.is_valid():
                 form.save()
+
+                messages(request, 'محصول با موفقیت ایجاد شد ')
+                #TODO: REDIRECT TO ADMIN PANEL
                 return HttpResponse('Product created!')
 
             return render(request, 'product/create.html', {'form': form})
@@ -56,7 +59,8 @@ class EditView(TemplateView):
 
             if form.is_valid():
                 form.save()
-                return HttpResponse('product is updated')  # TODO: REDIRECT TO PRODUCT DETAIL
+                messages.success(request, 'محصول با موفقیت ویرایش شد')
+                return redirect('/product/' + str(id) + '/')
 
             return render(request, 'product/edit.html', {'form': form})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')

@@ -67,3 +67,162 @@ p {
     margin:2px;
 }
 
+/* ///////////////////////////////////// */
+/* PAGE 2 */
+
+#search-section {
+    margin: 10px auto;
+    padding: 20px;
+}
+input {
+    border-radius: 10px;
+    font-size: 12px;
+    padding:10px;
+    border: 1px solid #999999;
+    width: 100%;
+}
+input:focus {
+    outline: none !important;
+    border: 1px solid rgb(0, 92, 128);
+    box-shadow: 0 0 6px #00a5ce;
+    border-radius: 10px;
+    color:black;
+}
+.btn {
+    border-radius: 10px;
+}
+.box {
+    background-color: rgba(185, 185, 185, 0.295);
+    border-radius: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin: 10px;
+}
+.box p, span{
+    padding:1px;
+}
+.product-title {
+    padding-top: 15px;
+}
+.product-title p, label {
+    font-weight: bold;
+}
+.product-title input {
+    width: 80%;
+    height: 50%;
+    text-align: center;
+
+}
+span {
+    font-size: 12px;
+}
+
+.img-box img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ///////////////////////////////////// */
+/* PAGE 3 */
+
+@media (min-width: 320px) {
+    .content {
+      max-width: 250px;
+    }
+}
+@media (min-width: 768px) {
+    .content {
+      max-width: 380px;
+    }
+    .img-box {
+        height:220px;
+    }
+}
+@media (min-width: 992px) {
+    .content {
+      max-width: 450px;
+    }
+}
+.content {
+    margin: 20px auto;
+    padding: 10px;
+    background-color: rgba(185, 185, 185, 0.295);
+    border-radius: 20px;
+}
+.icon {
+    width: 20px;
+    height: 18px;
+}
+hr { 
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+} 
+.center-text {
+    text-align: center;
+}
+label {
+    font-size: 13px;
+}
+.content input {
+    height: 30px;
+}
+select {
+    border-radius: 10px;
+    font-size: 12px;
+    border: 1px solid #999999;
+    width: 100%;
+}
+#file {
+    border-radius: 0px;
+    border: none;
+}
+textarea {
+    font-size: 12px;
+    padding: 5px;
+    border-radius: 10px;
+    border: 1px solid #999999;
+    width: 100%;
+}
+/* ///////////////////////////////////// */
+/* PAGE 4 */
+.table-head {
+    padding-right: 10px;
+}
+table {
+    font-size: 13px;
+    text-align: center;
+}
+table thead {
+    background-color: rgba(185, 185, 185, 0.685);
+}
+.table-responsive {
+    padding-top: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+tr button {
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    display: block;
+}
+tr button img {
+    width: 50%;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+}
+td input {
+    width: 30%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+} 
