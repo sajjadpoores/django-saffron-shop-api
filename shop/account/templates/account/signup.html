@@ -1,42 +1,115 @@
-<script>
-    var states = [
-    {% for state in states %}
-        {'name': '{{ state.name }}', 'cities': [
-        {% for city in state.Cities %}
-            {
-            'name': '{{city.name}}',
-            'value': {{city.value}},
-            },
-        {% endfor %}]},
-    {% endfor %}
-    ];
+{% extends 'base.html' %}
+{% load static %}
 
-    function setCity(){
-        var citySelect = document.getElementById('id_city');
-        while(citySelect.length > 0) // remove all options
-            citySelect.remove(citySelect.legnth -1);
+{% block link %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/form.css' %}">
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/detail.css' %}">
+{% endblock %}
 
-        var stateSelect = document.getElementById('id_state');
-        selectedStateId = parseInt(stateSelect.options[stateSelect.selectedIndex].value);
+{% block script %}
+    <script>
+        var states = [
+        {% for state in states %}
+            {'name': '{{ state.name }}', 'cities': [
+            {% for city in state.Cities %}
+                {
+                'name': '{{city.name}}',
+                'value': {{city.value}},
+                },
+            {% endfor %}]},
+        {% endfor %}
+        ];
 
-        if(selectedStateId){
-            cities = states[selectedStateId - 1].cities;
+        function setCity(){
+            var citySelect = document.getElementById('id_city');
+            while(citySelect.length > 0) // remove all options
+                citySelect.remove(citySelect.legnth -1);
 
-            for(var i=0; i<cities.length; ++i){
+            var stateSelect = document.getElementById('id_state');
+            selectedStateId = parseInt(stateSelect.options[stateSelect.selectedIndex].value);
+
+            if(selectedStateId){
+                cities = states[selectedStateId - 1].cities;
+
+                for(var i=0; i<cities.length; ++i){
+                    var option = document.createElement("option");
+                    option.text = cities[i].name;
+                    option.value = cities[i].value;
+                    citySelect.add(option);
+                }
+            }
+            else{
                 var option = document.createElement("option");
-                option.text = cities[i].name;
-                option.value = cities[i].value;
+                option.text = "---------";
+                option.value = "";
                 citySelect.add(option);
             }
         }
-        else{
-            var option = document.createElement("option");
-            option.text = "---------";
-            option.value = "";
-            citySelect.add(option);
-        }
-    }
-</script>
+    </script>
+{% endblock %}
+
+{% block title %}
+    فروشگاه دارنیا | ثبت نام
+{% endblock %}
+
+{% block section %}
+<div class="container">
+    <form action="" method="POST">
+        {% csrf_token %}
+
+        <div class="row justify-content-center">
+            <div class="col">
+                <div class="row">
+                    <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/user-plus-icon.png' %}"></div>
+                    <div class="col-10 col-lg-11"><h2>ثبت نام</h2></div>
+                </div>
+                <hr>
+
+                {% for field in form %}
+                    {% if field.errors %}
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-4"><label></label></div>
+                            <div class="col-4 text-danger"><label>{{ field.errors.as_text }}</label></div>
+                        </div>
+                    {% endif %}
+
+                    {% if field.html_name == 'state' %}
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-4"><label>{{ field.label }}</label></div>
+                                <select name="state" required id="id_state" onchange="setCity()">
+                                    <option value="">---------</option>
+                                    {% for state in states %}
+                                        <option value="{{ forloop.counter}}">{{ state.name }}</option>
+                                    {% endfor %}
+                                </select>
+                        </div>
+
+                    {% elif field.html_name == 'city' %}
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-4"><label>{{ field.label }}</label></div>
+                            <select name="city" required id="id_city" onselect="">
+                                <option value="">---------</option>
+                            </select>
+                        </div>
+                    {% else %}
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-4"><label>{{ field.label }}</label></div>
+                            <div class="col-8">{{ field }} </div>
+                        </div>
+                    {% endif %}
+
+                {% endfor %}
+
+                    <div class="row center-text" style="margin-top:10px;">
+                        <div class="col-6"><input type="reset" class="btn btn-info" value="پاک کردن"></div>
+                        <div class="col-6"><input type="submit" class="btn btn-success" value="ورود"></div>
+                    </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
 <span class="error"> {{ error }} </span>
 <form action="" method="POST">
     {% csrf_token %}
