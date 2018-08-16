@@ -250,9 +250,6 @@ def get_cart_item_or_404(id):
     return cart_item
 
 
-
-
-
 class DeleteFromCart(TemplateView):
     def get(self, request, id, pid, *args, **kwargs):
         cart = get_cart_or_404(id)
@@ -332,10 +329,19 @@ class VerifyView(TemplateView):
                 cart.is_payed = True
                 cart.save()
 
-                return HttpResponse('Transaction success.\nRefID: ' + str(result.RefID))
+                messages.success(request, 'پرداخت با موفقیت انجام شد.')
+                return  redirect('/cart/' + str(id) + '/')
             elif result.Status == 101:
-                return HttpResponse('Transaction submitted : ' + str(result.Status))
+
+                messages.success(request, 'پرداخت شما ثبت شد.')
+                return redirect('/cart/' + str(id) + '/')
             else:
-                return HttpResponse('Transaction failed.\nStatus: ' + str(result.Status))
+                messages.error(request, 'پرداخت صورت نگرفت.')
+                return redirect('/cart/' + str(id) + '/')
         else:
-            return HttpResponse('Transaction failed or canceled by user')
+
+            cart = get_cart_or_404(id)
+            cart.is_payed = True
+            cart.save()
+            messages.error(request, 'پرداخت صورت نگرفت')
+            return redirect('/cart/' + str(id) + '/')

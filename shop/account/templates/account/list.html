@@ -1,17 +1,47 @@
-<table style="width:100%" border="1">
-    <tr>
-        <th></th>
-        <th>First name</th>
-        <th>Last name</th>
-        <th>Username</th>
-        <th>Email</th>
-    </tr>
-{% for account in accounts %}
-    <tr>
-        <th>{{ forloop.counter }}</th>
-        <th>{{ account.first_name }}</th>
-        <th>{{ account.last_name }}</th>
-        <th>{{ account.username }}</th>
-        <th>{{ account.email }}</th>
-    </tr>
-{% endfor %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    فروشگاه دارنیا | لیست کاربران
+{% endblock %}
+
+{% block section %}
+<section class="content">
+    <div class="row table-head">
+        <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/table-icon.png' %}"></div>
+        <div class="col-10 col-lg-11"><h2>لیست کاربران</h2></div>
+    </div>
+    <hr>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>مشاهده</th>
+                    <th>نام</th>
+                    <th>نام خانوادگی</th>
+                    <th>نام کاربری</th>
+                    <th>شهر</th>
+                    <th>ایمیل</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for account in accounts %}
+                <tr>
+                    <td><form action="/account/{{ account.id }}/"><button type="submit"><img src="{% static 'images/user-icon.png' %}"></button></form></td>
+                    <td>{{ account.first_name }}</td>
+                    <td>{{ account.last_name }}</td>
+                    <td>{{ account.username }}</td>
+                    <td>{{ account.city }}</td>
+                    <td>{{ account.email }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="row center-text" style="margin-top:10px;">
+        <div class="col-3">
+            <form action="/account/signup/"><button type="submit" class="btn btn-info"><span>ایجاد</span></button></form></div>
+    </div>
+</section>
+{% endblock %}

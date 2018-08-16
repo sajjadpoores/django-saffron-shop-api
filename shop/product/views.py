@@ -28,9 +28,8 @@ class CreateView(TemplateView):
             if form.is_valid():
                 form.save()
 
-                messages(request, 'محصول با موفقیت ایجاد شد ')
-                #TODO: REDIRECT TO CATEGORY LIST
-                return HttpResponse('Product created!')
+                messages.success(request, 'محصول با موفقیت ایجاد شد ')
+                return redirect('/product/allforadmin/')
 
             return render(request, 'product/create.html', {'form': form})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
@@ -80,6 +79,19 @@ class ListView(TemplateView):
         return redirect('/product/' + search_string + '/search/')
 
 
+class ListForAdminView(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        if user_is_staff(request):
+            products = Product.objects.all()
+            from cart.views import get_cartid
+            cart = get_cartid(request)
+            return render(request, 'product/list2.html', {'products': products, 'cartid': cart.id})
+
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        return redirect('/home/')
+
+
 class DetailView(TemplateView):
 
     def get(self, request, id, *args, **kwargs):
@@ -120,7 +132,10 @@ class DeleteView(TemplateView):
         if user_is_staff(request):
             product = get_product_or_404(id)
             product.delete()
-            return HttpResponse('Product is deleted!') # TODO: REDIRECT USER TO PRODUCT LIST
+
+            messages.success(request, 'محصول با موفقیت حذف شد.')
+            return redirect('/product/allforadmin/')
+
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -141,8 +156,8 @@ class CategoryCreateView(TemplateView):
                 form.save()
 
                 messages.success(request, 'دسته با موفقیت اضافه شد.')
-                # TODO: RETURN TO ADMIN PANEL
-                return HttpResponse('Category created!')
+
+                return redirect('/product/category/all/')
             return render(request, 'category/edit.html', {'form': form})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
@@ -200,8 +215,7 @@ class CategoryDeleteView(TemplateView):
             category.delete()
 
             messages.success(request, 'دسته با موفقیت حذف شد')
-            # TODO: REDIRECT TO CATEGORY LIST
-            # return redirect('/product/category/' + str(id) + '/')
+            return redirect('/product/category/all/')
 
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')

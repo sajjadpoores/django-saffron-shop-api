@@ -1,4 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
 {% load multiply %}
+
+{% block title %}
+    فروشگاه دارنیا | سبد خرید
+{% endblock %}
+
+{% block section %}
+<section class="content">
+    <div class="row table-head">
+        <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/table-icon.png' %}"></div>
+        <div class="col-10 col-lg-11"><h2>لیست محصولات سبد</h2></div>
+    </div>
+    <hr>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>حذف</th>
+                    <th>نام محصول</th>
+                    <th>قیمت</th>
+                    <th>تعداد</th>
+                    <th>مجموع</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for cart_item in cart_items %}
+                <tr>
+                    <td><form action="/cart/{{ cart.id }}/delete/{{ cart_item.product.id }}">
+                        <input type="hidden" name="path" value="{{ request.path }}">
+                        <button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/trash-icon.png' %}"></button>
+                    </form></td>
+                    <td>{{ cart_item.product.name }}</td>
+                    <td>{{ cart_item.product.price }}</td>
+                    <td>{{ cart_item.count }}</td>
+                    <td>{{ cart_item.count|multiply:cart_item.product.price }}</td>
+                </tr>
+            {% endfor %}
+
+                <tr>
+                    <td colspan="4">مجموع کل</td>
+                    <td colspan="1">{{ cart.total }} </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row center-text" style="margin-top:10px;">
+        <div class="col-3">
+            <form action="/cart/{{cart.id}}/pay/"><button type="submit" class="btn {% if cart.is_payed %}btn-danger{% else %}btn-warning{% endif %}" {% if cart.is_payed %}disabled{% endif %}><span>پرداخت</span></button></form></div>
+    </div>
+</section>
+{% endblock %}
+
+
 <table style="width:100%" border="1">
     <tr>
         <th></th>

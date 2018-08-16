@@ -1,11 +1,41 @@
-<table style="width:100%" border="1">
-    <tr>
-        <th></th>
-        <th>نام دسته</th>
-    </tr>
-{% for category in categories %}
-    <tr>
-        <th>{{ forloop.counter }}</th>
-        <th>{{ category.name }}</th>
-    </tr>
-{% endfor %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    فروشگاه دارنیا | لیست دسته ها
+{% endblock %}
+
+{% block section %}
+<section class="content">
+    <div class="row table-head">
+        <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/table-icon.png' %}"></div>
+        <div class="col-10 col-lg-11"><h2>لیست دسته ها</h2></div>
+    </div>
+    <hr>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>مشاهده</th>
+                    <th>نام</th>
+                    <th>حذف</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for category in categories %}
+                <tr>
+                    <td><form action="/product/category/{{ category.id }}/"><button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/user-icon.png' %}"></button></form></td>
+                    <td>{{ category.name}}</td>
+                    <td><form action="/product/category/{{ category.id }}/delete/"><button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/trash-icon.png' %}"></button></form></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="row center-text" style="margin-top:10px;">
+        <div class="col-3">
+            <form action="/product/category/create/"><button type="submit" class="btn btn-info"><span>ایجاد</span></button></form></div>
+    </div>
+</section>
+{% endblock %}

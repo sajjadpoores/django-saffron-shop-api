@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    فروشگاه دارنیا | لیست محصولات
+{% endblock %}
+
+{% block section %}
+<section class="content">
+    <div class="row table-head">
+        <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/table-icon.png' %}"></div>
+        <div class="col-10 col-lg-11"><h2>لیست محصولات</h2></div>
+    </div>
+    <hr>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>مشاهده</th>
+                    <th>نام</th>
+                    <th>قیمت</th>
+                    <th>موجودی</th>
+                    <th>حذف</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td><form action="/product/{{ product.id }}/"><button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/user-icon.png' %}"></button></form></td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.inventory }}</td>
+                    <td><form action="/product/{{ product.id }}/delete/"><button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/trash-icon.png' %}"></button></form></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="row center-text" style="margin-top:10px;">
+        <div class="col-3">
+            <form action="/product/create/"><button type="submit" class="btn btn-info"><span>ایجاد</span></button></form></div>
+    </div>
+</section>
+{% endblock %}

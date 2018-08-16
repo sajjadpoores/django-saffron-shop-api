@@ -77,8 +77,11 @@ class SignupView(TemplateView):
 
                     login(request, account)
 
-                messages.success(request, account.first_name + ' عزیز، خوش آمدید.')
-                return redirect('/home/')
+                    messages.success(request, account.first_name + ' عزیز، خوش آمدید.')
+                    return redirect('/home/')
+
+                messages.success(request, 'کاربر جدید ایجاد شد.')
+                return redirect('/account/all/')
             else:
                 return render(request, 'account/signup.html', {'form': form, 'states': states})
 
