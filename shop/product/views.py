@@ -29,7 +29,7 @@ class CreateView(TemplateView):
                 form.save()
 
                 messages(request, 'محصول با موفقیت ایجاد شد ')
-                #TODO: REDIRECT TO ADMIN PANEL
+                #TODO: REDIRECT TO CATEGORY LIST
                 return HttpResponse('Product created!')
 
             return render(request, 'product/create.html', {'form': form})
@@ -139,7 +139,10 @@ class CategoryCreateView(TemplateView):
             form = CategoryForm(request.POST)
             if form.is_valid():
                 form.save()
-                return HttpResponse('Category created!') # TODO: REDIRECT TO CATEGORY CREATE PAGE!
+
+                messages.success(request, 'دسته با موفقیت اضافه شد.')
+                # TODO: RETURN TO ADMIN PANEL
+                return HttpResponse('Category created!')
             return render(request, 'category/edit.html', {'form': form})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
@@ -166,7 +169,10 @@ class CategoryEditView(TemplateView):
             form = CategoryForm(request.POST, instance=category)
             if form.is_valid():
                 form.save()
-                return HttpResponse('Category edited!')  # TODO: REDIRECT TO CATEGORY CREATE PAGE!
+
+                messages.success(request, 'دسته با موفقیت ویرایش شد')
+                return redirect('/product/category/' + str(id) + '/')
+
             return render(request, 'category/edit.html', {'form': form})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
@@ -192,7 +198,11 @@ class CategoryDeleteView(TemplateView):
         if user_is_staff(request):
             category = get_category_or_404(id)
             category.delete()
-            return HttpResponse('Category is deleted!') # TODO: REDIRECT USER TO HOMEPAGE
+
+            messages.success(request, 'دسته با موفقیت حذف شد')
+            # TODO: REDIRECT TO CATEGORY LIST
+            # return redirect('/product/category/' + str(id) + '/')
+
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 

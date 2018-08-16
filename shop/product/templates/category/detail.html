@@ -1,2 +1,32 @@
- نام:
-{{ category.name }}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    فروشگاه دارنیا | {{ category.name }}
+{% endblock %}
+
+{% block section %}
+<section class="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col">
+                <div class="row">
+                    <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/user-icon.png' %}"></div>
+                    <div class="col-10 col-lg-11"><h2>دسته</h2></div>
+                </div>
+                <hr>
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><label>نام دسته:</label></div>
+                    <div class="col-6"><p>{{ category.name }}</p></div>
+                </div>
+                <hr>
+
+                <div class="row center-text" style="margin-top:10px;">
+                    <div class="col-6"><form action="/product/category/{{category.id}}/edit/"><button type="submit" class="btn btn-info">ویرایش</button></form></div>
+                    <div class="col-6"><form action="/product/category/{{category.id}}/delete/"><button type="submit" class="btn btn-danger">خذف</button></form></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
