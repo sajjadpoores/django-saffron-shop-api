@@ -1,17 +1,76 @@
-<table style="width:100%" border="1">
-    <tr>
-        <th></th>
-        <th>مشتری</th>
-        <th>زمان ایجاد</th>
-        <th>وضعیت پرداخت</th>
-        <th>مجموع</th>
-    </tr>
-{% for cart in carts %}
-    <tr>
-        <th>{{ forloop.counter }}</th>
-        <th>{{ cart.client.username }}</th>
-        <th>{{ cart.create_time }}</th>
-        <th>{{ cart.is_payed }}</th>
-        <th>{{ cart.total }}</th>
-    </tr>
-{% endfor %}
+{% extends 'base.html' %}
+{% load static %}
+{% load multiply %}
+
+{% block title %}
+    فروشگاه دارنیا | لیست سبد خرید
+{% endblock %}
+
+{% block section %}
+<section class="content">
+    <div class="row table-head">
+        <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/table-icon.png' %}"></div>
+        <div class="col-10 col-lg-11"><h2>لیست سبد ها</h2></div>
+    </div>
+    <hr>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>مشاهده</th>
+                    {% if request.user.is_staff %}
+                        <th>حذف</th>
+                        <th>ویرایش</th>
+                    {% endif %}
+                    <th>مشتری</th>
+                    <th>زمان ایجاد</th>
+                    <th>وضعیت پرداخت</th>
+                    <th>مجموع</th>
+
+                </tr>
+            </thead>
+            <tbody>
+            {% for cart in carts %}
+                <tr>
+                    <td>
+                        <form action="/cart/{{ cart.id }}/">
+                            <input type="hidden" name="path" value="{{ request.path }}">
+                            <button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/view-icon.png' %}"></button>
+                        </form>
+                    </td>
+                    {% if request.user.is_staff %}
+                        <td>
+                            <form action="/cart/{{ cart.id }}/delete/">
+                                <input type="hidden" name="path" value="{{ request.path }}">
+                                <button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/trash-icon.png' %}"></button>
+                            </form>
+                        </td>
+
+                        <td>
+                            <form action="/cart/{{ cart.id }}/edit/">
+                                <input type="hidden" name="path" value="{{ request.path }}">
+                                <button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/edit-icon.png' %}"></button>
+                            </form>
+                        </td>
+                    {% endif %}
+
+                    <th>{{ cart.client.username }}</th>
+                    <th>{{ cart.create_time }}</th>
+                    <th><img src="{% if cart.is_payed %}{% static 'images/true-icon.png' %}{% else %}{% static 'images/false-icon.png' %}{% endif %}"></th>
+                    <th>{{ cart.total }}</th>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    {% if request.user.is_staff %}
+        <div class="row center-text" style="margin-top:10px;">
+            <div class="col-3">
+                <form action="/cart/create/"><button type="submit" class="btn btn-info"><span>ایجاد</span></button></form></div>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

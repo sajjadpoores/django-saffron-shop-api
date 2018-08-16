@@ -52,27 +52,3 @@
     </div>
 </section>
 {% endblock %}
-
-
-<table style="width:100%" border="1">
-    <tr>
-        <th></th>
-        <th>کالا</th>
-        <th>قیمت کالا</th>
-        <th>تعداد</th>
-        <th>مجموع</th>
-    </tr>
-{% for cart_item in cart_items%}
-    <tr>
-        <th>{{ forloop.counter }}</th>
-        <th>{{ cart_item.product.name }}</th>
-        <th>{{ cart_item.product.price }}</th>
-        <th>{{ cart_item.count }}</th>
-        <th>{{ cart_item.count|multiply:cart_item.product.price }}</th>
-    </tr>
-{% endfor %}
-
-    <tr>
-        <th colspan="4">مجموع کل</th>
-        <th colspan="1">{{ cart.total }} </th>
-    </tr>

@@ -83,7 +83,10 @@ class CreateView(TemplateView):
             form = CartForm(request.POST)
             if form.is_valid():
                 form.save()
-                return HttpResponse('Cart created!')  # TODO: REDIRECT TO CART LIST
+
+                messages.success(request, 'کارت با موفقیت ایجاد شد.')
+                return redirect('/cart/all/')
+
             return render(request, 'cart/create.html', {'form': form})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
@@ -115,7 +118,10 @@ class EditCartView(TemplateView):
             form = CartForm(request.POST, instance=cart)
             if form.is_valid():
                 form.save()
-                return HttpResponse('Cart updated!')  # TODO: REDIRECT TO HOMEPAGE
+
+                messages.success(request, 'کارت با موفقیت ویرایش شد.')
+                return redirect('/cart/all/')
+
             return render(request, 'cart/edit.html', {'form': form})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
@@ -192,7 +198,11 @@ class DeleteCartView(TemplateView):
         if user_is_staff(request):
             cart = get_cart_or_404(id)
             cart.delete()
-            return HttpResponse('Cart is deleted!') # TODO: REDIRECT USER TO HOMEPAGE
+
+            messages.success(request, 'کارت با موفقیت حذف شد.')
+            redirect_path = get_redirect_path(request)
+            return redirect(redirect_path)
+
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 

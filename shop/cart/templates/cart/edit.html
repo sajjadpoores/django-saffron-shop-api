@@ -1,5 +1,46 @@
-<form enctype="multipart/form-data" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="ذخیره">
-</form>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    فروشگاه دارنیا | ویرایش کارت
+{% endblock %}
+
+{% block section %}
+<section class="content">
+    <div class="container">
+        <form enctype="multipart/form-data" method="POST">
+            {% csrf_token %}
+
+            <div class="row justify-content-center">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/user-plus-icon.png' %}"></div>
+                        <div class="col-10 col-lg-11"><h2>ویرایش کارت</h2></div>
+                    </div>
+                    <hr>
+
+                    {% for field in form %}
+                        {% if field.error %}
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-4"><label>خطا</label></div>
+                                <div class="col-8">{{ field.error }} </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-4"><label>{{ field.label }}</label></div>
+                            <div class="col-8">{{ field }} </div>
+                        </div>
+                    {% endfor %}
+
+                        <div class="row center-text" style="margin-top:10px;">
+                            <div class="col-6"><button type="reset" class="btn btn-info">پاک کردن</button></div>
+                            <div class="col-6"><button type="submit" class="btn btn-success" >ویرایش</button></div>
+                        </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
