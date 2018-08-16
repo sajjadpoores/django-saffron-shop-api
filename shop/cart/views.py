@@ -340,8 +340,5 @@ class VerifyView(TemplateView):
                 return redirect('/cart/' + str(id) + '/')
         else:
 
-            cart = get_cart_or_404(id)
-            cart.is_payed = True
-            cart.save()
             messages.error(request, 'پرداخت صورت نگرفت')
             return redirect('/cart/' + str(id) + '/')
