@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
-from django.contrib.messages import get_messages
+from django.contrib import messages
 
 
 class HomeView(TemplateView):
@@ -9,3 +9,26 @@ class HomeView(TemplateView):
         from cart.views import  get_cartid
         cart = get_cartid(request)
         return render(request, 'home/home.html', {'cartid': cart.id})
+
+
+class AdminView(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            from cart.views import get_cartid
+            cart = get_cartid(request)
+            return render(request, 'home/admin.html', {'cartid': cart.id})
+
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
+        return redirect('/home/')
+
+
+class DashboardView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            from cart.views import get_cartid
+            cart = get_cartid(request)
+            return render(request, 'home/dashboard.html', {'cartid': cart.id})
+
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
+        return redirect('/home/')

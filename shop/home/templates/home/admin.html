@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load multiply %}
+
+{% block title %}
+    فروشگاه دارنیا | پنل مدیریت
+{% endblock %}
+
+{% block section %}
+<section class="content">
+    <div class="row table-head">
+        <div class="col-2 col-lg-1"><img class="icon" src="{% static 'images/table-icon.png' %}"></div>
+        <div class="col-10 col-lg-11"><h2>پنل مدیریت</h2></div>
+    </div>
+    <hr>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>نام عملیات</th>
+                    <th>انجام</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>پروفایل مدیر</td>
+                    <td><form action="/account/{{ request.user.id }}/">
+                        <input type="hidden" name="path" value="{{ request.path }}">
+                        <button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/do-icon.png' %}"></button>
+                    </form></td>
+                </tr>
+
+                <tr>
+                    <td>لیست کاربران</td>
+                    <td><form action="/account/all/">
+                        <input type="hidden" name="path" value="{{ request.path }}">
+                        <button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/do-icon.png' %}"></button>
+                    </form></td>
+                </tr>
+
+                <tr>
+                    <td>لیست محصولات</td>
+                    <td><form action="/product/allforadmin/">
+                        <input type="hidden" name="path" value="{{ request.path }}">
+                        <button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/do-icon.png' %}"></button>
+                    </form></td>
+                </tr>
+
+                <tr>
+                    <td>لیست دسته ها</td>
+                    <td><form action="/product/category/all/">
+                        <input type="hidden" name="path" value="{{ request.path }}">
+                        <button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/do-icon.png' %}"></button>
+                    </form></td>
+                </tr>
+
+                <tr>
+                    <td>لیست کارت ها</td>
+                    <td><form action="/cart/all/">
+                        <input type="hidden" name="path" value="{{ request.path }}">
+                        <button style=" margin:auto;display:block;" type="submit"><img src="{% static 'images/do-icon.png' %}"></button>
+                    </form></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+{% endblock %}
+
+
+<table style="width:100%" border="1">
+    <tr>
+        <th></th>
+        <th>کالا</th>
+        <th>قیمت کالا</th>
+        <th>تعداد</th>
+        <th>مجموع</th>
+    </tr>
+{% for cart_item in cart_items%}
+    <tr>
+        <th>{{ forloop.counter }}</th>
+        <th>{{ cart_item.product.name }}</th>
+        <th>{{ cart_item.product.price }}</th>
+        <th>{{ cart_item.count }}</th>
+        <th>{{ cart_item.count|multiply:cart_item.product.price }}</th>
+    </tr>
+{% endfor %}
+
+    <tr>
+        <th colspan="4">مجموع کل</th>
+        <th colspan="1">{{ cart.total }} </th>
+    </tr>
