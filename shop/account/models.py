@@ -21,7 +21,7 @@ class Account(AbstractUser):
     first_name = models.CharField(verbose_name='نام', max_length=30, blank=False)
     last_name = models.CharField(verbose_name='نام خانوادگی', max_length=150, blank=False)
     email = models.EmailField(verbose_name='ایمیل', blank=False)
-    phone = models.CharField(verbose_name="شماره تلفن",max_length=11, blank=False)
+    phone = models.CharField(verbose_name="تلفن همراه",max_length=11, blank=False)
     post_code = models.CharField(verbose_name='کد پستی', max_length=10, default=0, blank=False)
     national_id = models.CharField(verbose_name="شماره ملی", max_length=10, default=0, blank=False, unique=True)
 
