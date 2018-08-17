@@ -74,7 +74,10 @@ class CreateView(TemplateView):
     def get(self, request, *args, **kwargs):
         if user_is_staff(request):
             form = CartForm()
-            return render(request, 'cart/create.html', {'form': form})
+
+            cart = get_cartid(request)
+
+            return render(request, 'cart/create.html', {'form': form, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -87,7 +90,9 @@ class CreateView(TemplateView):
                 messages.success(request, 'کارت با موفقیت ایجاد شد.')
                 return redirect('/cart/all/')
 
-            return render(request, 'cart/create.html', {'form': form})
+            cart = get_cartid(request)
+
+            return render(request, 'cart/create.html', {'form': form, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -108,7 +113,10 @@ class EditCartView(TemplateView):
         if user_is_staff(request):
             cart = get_cart_or_404(id)
             form = CartForm(instance=cart)
-            return render(request, 'cart/edit.html', {'form': form})
+
+            account_cart = get_cartid(request)
+
+            return render(request, 'cart/edit.html', {'form': form, 'cartid': account_cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -122,7 +130,9 @@ class EditCartView(TemplateView):
                 messages.success(request, 'کارت با موفقیت ویرایش شد.')
                 return redirect('/cart/all/')
 
-            return render(request, 'cart/edit.html', {'form': form})
+            account_cart = get_cartid(request)
+
+            return render(request, 'cart/edit.html', {'form': form, 'cartid': account_cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -132,7 +142,10 @@ class AllCartsListView(TemplateView):
     def get(self, request, *args, **kwargs):
         if user_is_staff(request):
             carts = Cart.objects.all()
-            return render(request, 'cart/list.html', {'carts': carts})
+
+            cart = get_cartid(request)
+
+            return render(request, 'cart/list.html', {'carts': carts, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -149,7 +162,9 @@ class AllCartsOfAccountView(TemplateView):
         if user_id_is_permitted_to_view(request, account_id):
             account = get_account_or_404(account_id)
             carts = Cart.objects.all().filter(client= account)
-            return render(request, 'cart/list.html', {'carts': carts})
+
+            cart = get_cartid(request)
+            return render(request, 'cart/list.html', {'carts': carts, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -187,7 +202,11 @@ class CartDetailView(TemplateView):
         cartid_session = request.session.get('cartid', None)
         if cart_belongs_to_user(request, cart) or user_is_staff(request) or cartid_session == id:
             cart_items = CartItem.objects.all().filter(cart__id=id)
-            return render(request, 'cart/detail.html', {'cart_items': cart_items, 'cart': cart})
+
+            account_cart = get_cartid(request)
+
+            return render(request, 'cart/detail.html', {'cart_items': cart_items, 'cart': cart,
+                                                        'cartid': account_cart .id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -248,8 +267,10 @@ class AddToCart(TemplateView):
                 redirect_path = get_redirect_path(request)
                 return redirect(redirect_path)
 
+            account_cart = get_cartid(request)
+
             return render(request, 'product/detail.html', {'forms': [form], 'submits': ['اضافه به سبذ'],
-                                                           'methods': ['POST'], 'cartid': cart.id})
+                                                           'methods': ['POST'], 'cartid': account_cart.id})
 
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
@@ -306,7 +327,7 @@ class PayView(TemplateView):
         client = Client('https://www.zarinpal.com/pg/services/WebGate/wsdl')
         if cart_belongs_to_user(request, cart):
             amount = cart.total
-            CallbackURL = 'http://localhost:8000/cart/' + str(id) + '/verify/'  # Important: need to edit for realy server.
+            CallbackURL = 'http://localhost:8000/cart/' + str(id) + '/verify/'  # edit for realy server.
             result = client.service.PaymentRequest(MERCHANT, amount, description, email, mobile, CallbackURL)
             if result.Status == 100:
                 return redirect('https://www.zarinpal.com/pg/StartPay/' + str(result.Authority))

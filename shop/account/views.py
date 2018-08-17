@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.generic import TemplateView
@@ -7,6 +6,7 @@ from .forms import LoginForm, SignupForm
 from .consts import states
 from .models import Account
 from django.shortcuts import get_object_or_404
+from cart.views import get_cartid
 
 
 class LoginView(TemplateView):
@@ -24,8 +24,11 @@ class LoginView(TemplateView):
                 messages.success(request, user.first_name + ' عزیز، خوش آمدید.')
                 return redirect('/home/')
         else:
+
+            cart = get_cartid(request)
+
             messages.error(request, 'نام کاربری یا کلمه عبور اشتباه است.')
-            return render(request, 'account/login.html', {'form': form})
+            return render(request, 'account/login.html', {'form': form, 'cartid': cart.id})
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -33,7 +36,10 @@ class LoginView(TemplateView):
             return redirect('/home/')
         
         form = LoginForm()
-        return render(request, 'account/login.html', {'form': form})
+
+        cart = get_cartid(request)
+
+        return render(request, 'account/login.html', {'form': form, 'cartid': cart.id})
     
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -45,7 +51,9 @@ class LoginView(TemplateView):
             user = self.get_user_or_none(form)
             return self.login_user_or_show_error(request, user, form)
         else:
-            return render(request, 'account/login.html', {'form': form})
+            cart = get_cartid(request)
+
+            return render(request, 'account/login.html', {'form': form, 'cartid': cart.id})
 
 
 class SignupView(TemplateView):
@@ -61,7 +69,10 @@ class SignupView(TemplateView):
             messages.warning(request, 'شما قبلا ثبت نام کرده اید.')
             return redirect('/home/')
         form = SignupForm()
-        return render(request, 'account/signup.html', {'form': form, 'states': states})
+
+        cart = get_cartid(request)
+
+        return render(request, 'account/signup.html', {'form': form, 'states': states, 'cartid': cart.id})
 
     def post(self, request, *args, **kwargs):
         if not self.user_is_loggedin(request):
@@ -69,7 +80,6 @@ class SignupView(TemplateView):
 
             if form.is_valid():
                 account = form.save()
-                from cart.views import get_cartid
                 if not request.user.is_staff:
                     cart = get_cartid(request)
                     cart.client = account
@@ -83,7 +93,9 @@ class SignupView(TemplateView):
                 messages.success(request, 'کاربر جدید ایجاد شد.')
                 return redirect('/account/all/')
             else:
-                return render(request, 'account/signup.html', {'form': form, 'states': states})
+                cart = get_cartid(request)
+
+                return render(request, 'account/signup.html', {'form': form, 'states': states, 'cartid': cart.id})
 
         messages.warning(request, 'شما قبلا ثبت نام کرده اید.')
         return redirect('/home/')
@@ -123,7 +135,10 @@ class EditView(TemplateView):
     def get(self, request, id, *args, **kwargs):
         if user_is_permitted_to_view(request, id):
             form = self.get_account_return_form(request, id)
-            return render(request, 'account/edit.html', {'form': form, 'states': states})
+
+            cart = get_cartid(request)
+
+            return render(request, 'account/edit.html', {'form': form, 'states': states, 'cartid': cart.id})
 
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
@@ -138,7 +153,10 @@ class EditView(TemplateView):
                 messages.success(request, 'پروفایل کاربر با موفقیت ویرایش شد.')
                 return redirect('/account/' + str(id) + '/')
             else:
-                return render(request, 'account/edit.html', {'form': form, 'states': states})
+
+                cart = get_cartid(request)
+
+                return render(request, 'account/edit.html', {'form': form, 'states': states, 'cartid': cart.id})
 
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
@@ -149,7 +167,6 @@ class DetailView(TemplateView):
     def get(self, request, id, *args, **kwargs):
         if user_is_permitted_to_view(request, id):
             account = get_account_or_404(id)
-            from cart.views import get_cartid
             cart = get_cartid(request)
             return render(request, 'account/detail.html', {'account': account, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
@@ -167,7 +184,10 @@ class ListView(TemplateView):
     def get(self, request, *args, **kwargs):
         if self.user_is_permitted_to_view_list(request):
             accounts = Account.objects.all()
-            return render(request, 'account/list.html', {'accounts': accounts})
+
+            cart = get_cartid(request)
+
+            return render(request, 'account/list.html', {'accounts': accounts, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 

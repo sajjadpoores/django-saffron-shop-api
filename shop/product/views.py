@@ -1,9 +1,9 @@
-from django.http import HttpResponse
 from django.contrib import messages
 from django.views.generic import TemplateView
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import ProductForm, CategoryForm, AddToCartForm, DeleteFromCartForm
 from .models import Product, Category
+from cart.views import get_cartid
 
 
 def user_is_staff(request):
@@ -17,7 +17,10 @@ class CreateView(TemplateView):
     def get(self, request, *args, **kwargs):
         if user_is_staff(request):
             form = ProductForm()
-            return render(request, 'product/create.html', {'form': form})
+
+            cart = get_cartid(request)
+
+            return render(request, 'product/create.html', {'form': form, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -31,7 +34,9 @@ class CreateView(TemplateView):
                 messages.success(request, 'محصول با موفقیت ایجاد شد ')
                 return redirect('/product/allforadmin/')
 
-            return render(request, 'product/create.html', {'form': form})
+            cart = get_cartid(request)
+
+            return render(request, 'product/create.html', {'form': form, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -47,7 +52,10 @@ class EditView(TemplateView):
         if user_is_staff(request):
             product = get_product_or_404(id)
             form = ProductForm(instance=product)
-            return render(request, 'product/edit.html', {'form': form})
+
+            cart = get_cartid(request)
+
+            return render(request, 'product/edit.html', {'form': form, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -61,7 +69,9 @@ class EditView(TemplateView):
                 messages.success(request, 'محصول با موفقیت ویرایش شد')
                 return redirect('/product/' + str(id) + '/')
 
-            return render(request, 'product/edit.html', {'form': form})
+            cart = get_cartid(request)
+
+            return render(request, 'product/edit.html', {'form': form, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -145,7 +155,10 @@ class CategoryCreateView(TemplateView):
     def get(self, request, *args, **kwargs):
         if user_is_staff(request):
             form = CategoryForm()
-            return render(request, 'category/create.html', {'form': form})
+
+            cart = get_cartid(request)
+
+            return render(request, 'category/create.html', {'form': form, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -158,7 +171,10 @@ class CategoryCreateView(TemplateView):
                 messages.success(request, 'دسته با موفقیت اضافه شد.')
 
                 return redirect('/product/category/all/')
-            return render(request, 'category/edit.html', {'form': form})
+
+            cart = get_cartid(request)
+
+            return render(request, 'category/edit.html', {'form': form, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -174,7 +190,10 @@ class CategoryEditView(TemplateView):
         if user_is_staff(request):
             category = get_category_or_404(id)
             form = CategoryForm(instance=category)
-            return render(request, 'category/edit.html', {'form': form})
+
+            cart = get_cartid(request)
+
+            return render(request, 'category/edit.html', {'form': form, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -188,7 +207,9 @@ class CategoryEditView(TemplateView):
                 messages.success(request, 'دسته با موفقیت ویرایش شد')
                 return redirect('/product/category/' + str(id) + '/')
 
-            return render(request, 'category/edit.html', {'form': form})
+            cart = get_cartid(request)
+
+            return render(request, 'category/edit.html', {'form': form, 'cartid': cart.id})
         messages.error(request, 'دسترسی به این صفحه مجاز نیست')
         return redirect('/home/')
 
@@ -197,14 +218,20 @@ class CategoryListView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.all()
-        return render(request, 'category/list.html', {'categories': categories})
+
+        cart = get_cartid(request)
+
+        return render(request, 'category/list.html', {'categories': categories, 'cartid': cart.id})
 
 
 class CategoryDetailView(TemplateView):
 
     def get(self, request, id, *args, **kwargs):
         category = get_category_or_404(id)
-        return render(request, 'category/detail.html', {'category': category})
+
+        cart = get_cartid(request)
+
+        return render(request, 'category/detail.html', {'category': category, 'cartid': cart.id})
 
 
 class CategoryDeleteView(TemplateView):
