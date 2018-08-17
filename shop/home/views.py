@@ -32,3 +32,8 @@ class DashboardView(TemplateView):
 
         messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
+
+
+def handler404(request, exception, template_name='404.html'):
+    messages.error(request, 'صفحه مورد نظر پیدا نشد.')
+    return redirect('/home/')
