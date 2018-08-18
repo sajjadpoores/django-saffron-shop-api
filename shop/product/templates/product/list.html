@@ -31,7 +31,7 @@
                 <div class="col-9 col-md-5 col-lg-3">
                     <div class="box col-10 col-md-12 col-xl-12">
                             <div class="img-box">
-                                <img class="img-fluid" src="{{ product.photo.url }}">
+                                <img class="img-fluid" src="{% if product.photo %}{{ product.photo.url }}{% endif %}">
                             </div>
                             <div class="row product-title">
                                 <div class="col-6"><p>نام محصول:</p></div>

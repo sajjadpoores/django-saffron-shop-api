@@ -4,6 +4,8 @@ from .models import Category, Product
 from account.models import Account, State, City
 from cart.models import Cart, CartItem
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.contrib.messages import get_messages
+from random import randint
 
 
 class FormTest(TestCase):
@@ -89,13 +91,15 @@ class ViewTest(TestCase):
         response = self.client.get('/account/logout/')
 
         response = self.client.post('/account/login/', login_data)
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'logged in', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue('عزیز، خوش آمدید' in str(messages[len(messages)-1]))
 
     def create_user_and_login(self, username='username'):
         response = self.client.get('/account/logout/')
 
-        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500494',
+        signup_data = {'first_name': 'first name', 'last_name': 'last name', 'national_id': '0720500' +
+                                                                                            str(randint(100, 999)),
                        'email': 'email@emailserver.domain', 'phone': '09121234567', 'username': username,
                        'post_code': '0123456789', 'state': '1', 'city': '1', 'address': 'the address',
                        'password1': 'password@123', 'password2': 'password@123'}
@@ -110,13 +114,15 @@ class ViewTest(TestCase):
 
     def test_create_view(self):
         response = self.client.get('/product/create/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         self.create_user_and_login()
         response = self.client.get('/product/create/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
         self.login({'username': 'admin', 'password': 'password@123'})
@@ -133,13 +139,15 @@ class ViewTest(TestCase):
 
     def test_edit_view(self):
         response = self.client.get('/product/1/edit/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         self.create_user_and_login()
         response = self.client.get('/product/1/edit/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
         self.login({'username': 'admin', 'password': 'password@123'})
@@ -204,9 +212,11 @@ class ViewTest(TestCase):
         self.assertTemplateUsed(response, 'product/detail.html')
 
         self.assertEqual(len(response.context['forms']), 1)
-
+        from cart.views import get_cartid
+        request = response.wsgi_request
+        cartid = get_cartid(request).id
         cart_item = CartItem.objects.create(product=Product.objects.get(pk=1), count=1,
-                                            cart=Cart.objects.get(pk=self.client.session['cartid']))
+                                            cart=Cart.objects.get(pk=cartid))
 
         response = self.client.get('/product/1/')
         self.assertTemplateUsed(response, 'product/detail.html')
@@ -214,13 +224,15 @@ class ViewTest(TestCase):
 
     def test_delete_view(self):
         response = self.client.get('/product/1/delete/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         self.create_user_and_login()
         response = self.client.get('/product/1/delete/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
         self.login({'username': 'admin', 'password': 'password@123'})
@@ -236,17 +248,21 @@ class ViewTest(TestCase):
         photo_file.close()
 
         response = self.client.get('/product/1/delete/')
-        self.assertEqual(b'Product is deleted!', response.content) #TODO: CHECK REDIRECTION
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'محصول با موفقیت حذف شد.')
 
     def test_create_category_view(self):
         response = self.client.get('/product/category/create/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         self.create_user_and_login()
         response = self.client.get('/product/category/create/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
         self.login({'username': 'admin', 'password': 'password@123'})
@@ -263,13 +279,15 @@ class ViewTest(TestCase):
 
     def test_edit_category_view(self):
         response = self.client.get('/product/category/100/edit/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         self.create_user_and_login()
         response = self.client.get('/product/category/1/edit/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
         self.login({'username': 'admin', 'password': 'password@123'})
@@ -316,13 +334,15 @@ class ViewTest(TestCase):
 
     def test_category_delete_view(self):
         response = self.client.get('/product/category/1/delete/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         self.create_user_and_login()
         response = self.client.get('/product/category/1/delete/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
-        self.assertEqual(b'You are not permitted to visit this page', response.content)
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123', is_staff=True)
         self.login({'username': 'admin', 'password': 'password@123'})
@@ -335,9 +355,10 @@ class ViewTest(TestCase):
 
     def test_search_view(self):
         category = Category.objects.get(pk=1)
-        Product.objects.create(name='p1', category=category, price=10, description='text')
-        Product.objects.create(name='p2', category=category, price=10, description='text')
-
+        p1 = Product.objects.create(name='p1', category=category, price=10, description='text')
+        p2 = Product.objects.create(name='p2', category=category, price=10, description='text')
+        p1.save()
+        p2.save()
         response = self.client.get('/product/p/search/')
         self.assertEqual(response.context['products'].count(), 2)
 

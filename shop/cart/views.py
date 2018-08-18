@@ -55,7 +55,6 @@ def get_cart_of_account(account):
 def get_cartid(request):
     if request.user.is_authenticated:
         cart = get_cart_of_account(request.user)
-        return cart
     else:
         cart = get_cartid_of_anonymous(request)
     cart.save()
@@ -78,7 +77,7 @@ class CreateView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'cart/create.html', {'form': form, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
     def post(self, request, *args, **kwargs):
@@ -93,7 +92,7 @@ class CreateView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'cart/create.html', {'form': form, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -117,7 +116,7 @@ class EditCartView(TemplateView):
             account_cart = get_cartid(request)
 
             return render(request, 'cart/edit.html', {'form': form, 'cartid': account_cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
     def post(self, request, id, *args, **kwargs):
@@ -133,7 +132,7 @@ class EditCartView(TemplateView):
             account_cart = get_cartid(request)
 
             return render(request, 'cart/edit.html', {'form': form, 'cartid': account_cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -146,7 +145,7 @@ class AllCartsListView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'cart/list.html', {'carts': carts, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -165,7 +164,7 @@ class AllCartsOfAccountView(TemplateView):
 
             cart = get_cartid(request)
             return render(request, 'cart/list.html', {'carts': carts, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -207,7 +206,7 @@ class CartDetailView(TemplateView):
 
             return render(request, 'cart/detail.html', {'cart_items': cart_items, 'cart': cart,
                                                         'cartid': account_cart .id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -222,7 +221,7 @@ class DeleteCartView(TemplateView):
             redirect_path = get_redirect_path(request)
             return redirect(redirect_path)
 
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -237,7 +236,7 @@ class AddToCartHasCount(TemplateView):
         if cart_belongs_to_user(request, cart) or user_is_staff(request) or cartid_session == id:
             add_product_to_cart(cart, product, count)
             return HttpResponse("product is now added to the cart!")
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -262,7 +261,7 @@ class AddToCart(TemplateView):
                     return redirect('/product/' + str(pid) + '/')
 
                 add_product_to_cart(cart, product, count)
-                messages.success(request, 'محصول به سبد اضافه شد')
+                messages.success(request, 'محصول به سبد اضافه شد.')
 
                 redirect_path = get_redirect_path(request)
                 return redirect(redirect_path)
@@ -272,7 +271,7 @@ class AddToCart(TemplateView):
             return render(request, 'product/detail.html', {'forms': [form], 'submits': ['اضافه به سبذ'],
                                                            'methods': ['POST'], 'cartid': account_cart.id})
 
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -289,7 +288,7 @@ class DeleteFromCart(TemplateView):
         if len(cart_item):
             cart_item = cart_item[0]
         else:
-            messages.error(request, 'محصول در سبد نیست')
+            messages.error(request, 'محصول در سبد نیست.')
             redirect_path = get_redirect_path(request)
             return redirect(redirect_path)
 
@@ -299,15 +298,15 @@ class DeleteFromCart(TemplateView):
                 cart.save()
                 cart_item.delete()
 
-                messages.success(request, 'محصول از سبد حذف شد')
+                messages.success(request, 'محصول از سبد حذف شد.')
                 redirect_path = get_redirect_path(request)
                 return redirect(redirect_path)
 
-            messages.error(request, 'محصول در سبد نیست')
+            messages.error(request, 'محصول در سبد نیست.')
             redirect_path = get_redirect_path(request)
             return redirect(redirect_path)
 
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -315,7 +314,7 @@ from zeep import Client
 from django.shortcuts import redirect
 MERCHANT = 'e3cdd5aa-9d9b-11e8-922d-000c295eb8fc'
 # amount = 1000  # Toman / Required
-description = "توضیحات مربوط به تراکنش را در این قسمت وارد کنید"  # Required
+description = "توضیحات مربوط به تراکنش را در این قسمت وارد کنید."  # Required
 email = 'email@example.com'  # Optional
 mobile = '09123456789'  # Optional
 
@@ -333,7 +332,7 @@ class PayView(TemplateView):
                 return redirect('https://www.zarinpal.com/pg/StartPay/' + str(result.Authority))
             else:
                 return HttpResponse('Error code: ' + str(result.Status))
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -371,5 +370,5 @@ class VerifyView(TemplateView):
                 return redirect('/cart/' + str(id) + '/')
         else:
 
-            messages.error(request, 'پرداخت صورت نگرفت')
+            messages.error(request, 'پرداخت صورت نگرفت.')
             return redirect('/cart/' + str(id) + '/')

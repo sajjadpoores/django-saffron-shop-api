@@ -32,7 +32,7 @@ class LoginView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            messages.warning(request, 'شما قبلا وارد شده اید')
+            messages.warning(request, 'شما قبلا وارد شده اید.')
             return redirect('/home/')
         
         form = LoginForm()
@@ -43,7 +43,7 @@ class LoginView(TemplateView):
     
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            messages.warning(request, 'شما قبلا وارد شده اید')
+            messages.warning(request, 'شما قبلا وارد شده اید.')
             return redirect('/home/')
         
         form = LoginForm(request.POST)
@@ -140,7 +140,7 @@ class EditView(TemplateView):
 
             return render(request, 'account/edit.html', {'form': form, 'states': states, 'cartid': cart.id})
 
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
     def post(self, request, id, *args, **kwargs):
@@ -158,7 +158,7 @@ class EditView(TemplateView):
 
                 return render(request, 'account/edit.html', {'form': form, 'states': states, 'cartid': cart.id})
 
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -169,7 +169,7 @@ class DetailView(TemplateView):
             account = get_account_or_404(id)
             cart = get_cartid(request)
             return render(request, 'account/detail.html', {'account': account, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -188,7 +188,7 @@ class ListView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'account/list.html', {'accounts': accounts, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -204,7 +204,7 @@ class DeactivateView(TemplateView):
                 return redirect('/account/' + str(id) + '/')
             messages.error(request, 'حساب کاربر قبلا غیر فعال شده است.')
             return redirect('/account/' + str(id) + '/')
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -220,5 +220,5 @@ class ActivateView(TemplateView):
                 return redirect('/account/' + str(id) + '/')
             messages.error(request, 'حساب کاربر قبلا فعال شده است.')
             return redirect('/account/' + str(id) + '/')
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')

@@ -21,7 +21,7 @@ class CreateView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'product/create.html', {'form': form, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
     def post(self, request, *args, **kwargs):
@@ -37,7 +37,7 @@ class CreateView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'product/create.html', {'form': form, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -56,7 +56,7 @@ class EditView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'product/edit.html', {'form': form, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
     def post(self, request, id, *args, **kwargs):
@@ -72,7 +72,7 @@ class EditView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'product/edit.html', {'form': form, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -98,7 +98,7 @@ class ListForAdminView(TemplateView):
             cart = get_cartid(request)
             return render(request, 'product/list2.html', {'products': products, 'cartid': cart.id})
 
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -146,7 +146,7 @@ class DeleteView(TemplateView):
             messages.success(request, 'محصول با موفقیت حذف شد.')
             return redirect('/product/allforadmin/')
 
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -159,7 +159,7 @@ class CategoryCreateView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'category/create.html', {'form': form, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
     def post(self, request, *args, **kwargs):
@@ -175,7 +175,7 @@ class CategoryCreateView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'category/edit.html', {'form': form, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -194,7 +194,7 @@ class CategoryEditView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'category/edit.html', {'form': form, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
     def post(self, request, id, *args, **kwargs):
@@ -210,7 +210,7 @@ class CategoryEditView(TemplateView):
             cart = get_cartid(request)
 
             return render(request, 'category/edit.html', {'form': form, 'cartid': cart.id})
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -244,7 +244,7 @@ class CategoryDeleteView(TemplateView):
             messages.success(request, 'دسته با موفقیت حذف شد')
             return redirect('/product/category/all/')
 
-        messages.error(request, 'دسترسی به این صفحه مجاز نیست')
+        messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
 
@@ -260,7 +260,7 @@ class CategoryProductsView(TemplateView):
 class SearchView(TemplateView):
 
     def get(self, request, search_string, *args, **kwargs):
-        products = Product.objects.all().filter(name__contains= search_string)
+        products = Product.objects.all().filter(name__contains=search_string)
         from cart.views import get_cartid
         cart = get_cartid(request)
         return render(request, 'product/list.html',
