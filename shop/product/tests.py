@@ -238,7 +238,6 @@ class ViewTest(TestCase):
         self.login({'username': 'admin', 'password': 'password@123'})
 
         response = self.client.get('/product/1/delete/')
-        #TODO: CHECK 404 NOT FOUND PAGE
 
         photo_file = open('product/test_pic.jpg', 'rb')
         post_data = {'name': 'product1', 'price': '12000', 'description': 'qweqwe', 'inventory': '111', 'category': '1',
@@ -300,7 +299,7 @@ class ViewTest(TestCase):
         self.assertEqual(Category.objects.get(pk=1).name, 'first_category')
 
         response = self.client.get('/product/category/2/edit/')
-        self.assertTemplateNotUsed(response, 'category/edit.html') #TODO: CHECK REDIRECTION TO ERROR PAGE 404
+        self.assertTemplateNotUsed(response, 'category/edit.html')
 
     def test_category_list_view(self):
         response = self.client.get('/product/category/all/')
@@ -330,7 +329,7 @@ class ViewTest(TestCase):
         self.assertTemplateUsed(response, 'category/detail.html')
 
         response = self.client.get('/product/category/2/')
-        self.assertTemplateNotUsed(response, 'category/detail.html') #TODO: CHECK REDIRECTION TO ERROR PAGE
+        self.assertTemplateNotUsed(response, 'category/detail.html')
 
     def test_category_delete_view(self):
         response = self.client.get('/product/category/1/delete/')
@@ -348,7 +347,6 @@ class ViewTest(TestCase):
         self.login({'username': 'admin', 'password': 'password@123'})
 
         response = self.client.get('/product/2/category/delete/')
-        # TODO: CHECK 404 NOT FOUND PAGE
 
         response = self.client.get('/product/category/1/delete/')
         self.assertEqual(Category.objects.all().count(), 0)

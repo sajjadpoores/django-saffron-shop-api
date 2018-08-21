@@ -66,12 +66,13 @@
                 <hr>
                 <div class="row center-text" style="margin-top:10px;">
                     <div class="col-6"><form action="/account/{{account.id}}/edit/"><button type="submit" class="btn btn-info">ویرایش اطلاعات</button></form></div>
+                    {% if account.is_staff %}
                         {% if account.is_active %}
                             <div class="col-6"><form action="/account/{{account.id}}/deactivate/"><button type="submit" class="btn btn-danger">غیر فعال سازی</button></form></div>
                         {% else %}
                             <div class="col-6"><form action="/account/{{account.id}}/activate/"><button type="submit" class="btn btn-danger">فعال سازی</button></form></div>
                         {% endif %}
-                </div>
+                    {% endif %}
             </div>
         </div>
     </div>

@@ -120,7 +120,7 @@ def user_is_permitted_to_view(request, id):
 
 def get_account_or_404(id):
     account = get_object_or_404(Account, pk=id)
-    return account # TODO: REDIRECT TO ERROR PAGE
+    return account
 
 
 class EditView(TemplateView):

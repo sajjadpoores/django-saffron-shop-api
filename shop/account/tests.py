@@ -151,10 +151,8 @@ class ViewTest(TestCase):
         account = Account.objects.get(username='username')
         self.client.force_login(account)
         response = self.client.get('/account/signup/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
 
         response = self.client.post('/account/signup/', signup_data)
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
 
         self.client.logout()
 
@@ -226,7 +224,7 @@ class ViewTest(TestCase):
         self.assertEqual(str(messages[len(messages) - 1]), 'دسترسی به این صفحه مجاز نیست.')
 
         response = self.client.get('/account/2/edit/')
-        # TODO: CHECK STATUS CODE BEING REDIRECT WHEN HOME PAGE IS CREATED
+
         self.assertTemplateUsed(response, 'account/edit.html')
         self.assertEqual(response.context['form'].instance.username, 'username2')
 
@@ -271,7 +269,7 @@ class ViewTest(TestCase):
         self.assertTemplateUsed(response, 'account/detail.html')
         self.assertEqual('username', response.context['account'].username)
 
-        response = self.client.get('/account/4/') # TODO: CHECK REDIRECTION WHEN ERROR PAGE CREATED
+        response = self.client.get('/account/4/')
         self.assertTemplateNotUsed(response, 'account/detail.html')
 
     def test_list_view(self):

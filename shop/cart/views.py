@@ -97,12 +97,12 @@ class CreateView(TemplateView):
 
 
 def get_account_or_404(id):
-    account = get_object_or_404(Account, pk=id) # TODO: REDITRECT TO ERROR PAGE
+    account = get_object_or_404(Account, pk=id)
     return account
 
 
 def get_cart_or_404(id):
-    cart = get_object_or_404(Cart, pk=id) # TODO: REDITRECT TO ERROR PAGE
+    cart = get_object_or_404(Cart, pk=id)
     return cart
 
 
@@ -170,7 +170,7 @@ class AllCartsOfAccountView(TemplateView):
 
 def cart_belongs_to_user(request, cart):
     cart_account = cart.client
-    if cart_account  is not None and request.user.id == cart_account .id:
+    if cart_account is not None and request.user.id == cart_account .id:
         return True
     return False
 
@@ -242,7 +242,7 @@ class AddToCartHasCount(TemplateView):
 
 class AddToCart(TemplateView):
     def get(self, request, id, pid, *args, **kwargs):
-        return HttpResponse("this page does not support get request") #TODO REDIRECT TO ERROR PAGE
+        return HttpResponse("this page does not support get request")
 
     def post(self, request, id, pid, *args, **kwargs):
         from product.views import get_product_or_404
@@ -276,7 +276,7 @@ class AddToCart(TemplateView):
 
 
 def get_cart_item_or_404(id):
-    cart_item = get_object_or_404(CartItem, pk=id) # TODO: REDITRECT TO ERROR PAGE
+    cart_item = get_object_or_404(CartItem, pk=id)
     return cart_item
 
 
@@ -292,7 +292,7 @@ class DeleteFromCart(TemplateView):
             redirect_path = get_redirect_path(request)
             return redirect(redirect_path)
 
-        if cart_belongs_to_user(request, cart) or user_is_staff(request):  # TODO: OR SESSION[CARTID] OF ANONYUSER == ID
+        if cart_belongs_to_user(request, cart) or user_is_staff(request):
             if cart_item.cart == cart:
                 cart.total -= cart_item.count * cart_item.product.price
                 cart.save()

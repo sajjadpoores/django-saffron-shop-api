@@ -73,6 +73,16 @@
                         </form>
                     </div>
                     {% endif %}
+
+                {% if request.user.is_staff  %}
+                    <div class="row" style="margin-top:10px;">
+                        <div class="col-6"></div>
+                        <form class="col6" action="/product/{{ product.id }}/edit/" method="GET">
+                            <button type="submit" class="btn btn-info"><span>ویرایش</span></button>
+                        </form>
+                    </div>
+                {% endif %}
+
             </div>
         </div>
     </div>

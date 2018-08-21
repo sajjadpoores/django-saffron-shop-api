@@ -134,7 +134,7 @@ class ViewTest(TestCase):
         response = self.client.get('/cart/all/1/')
         self.assertTemplateUsed(response, 'cart/list.html')
 
-        response = self.client.get('/cart/all/4/')  # TODO: CHECK REDIRECTION WHEN ERROR PAGE CREATED
+        response = self.client.get('/cart/all/4/')
         self.assertTemplateNotUsed(response, 'cart/list.html')
 
     def test_edit_cart(self):
@@ -241,7 +241,7 @@ class ViewTest(TestCase):
 
     def test_add_to_cart(self):
         response = self.client.get('/cart/1/add/1/')
-        self.assertEqual(response.status_code, 200)  # TODO: CHECK REDIRECT TO ERROR PAGE
+        self.assertEqual(response.status_code, 200)
 
         account = Account.objects.create_user(username='admin', email='admin@admin.com', password='password@123',
                                               is_staff=True)
@@ -285,7 +285,6 @@ class ViewTest(TestCase):
         self.login({'username': 'admin', 'password': 'password@123'})
 
         response = self.client.get('/cart/1/delete/')
-        # TODO: CHECK 404 NOT FOUND PAGE
 
         cart = Cart.objects.create()
         cart.save()

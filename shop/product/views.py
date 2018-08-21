@@ -42,7 +42,7 @@ class CreateView(TemplateView):
 
 
 def get_product_or_404(id):
-    product = get_object_or_404(Product, pk=id) # TODO: REDITRECT TO ERROR PAGE
+    product = get_object_or_404(Product, pk=id)
     return product
 
 
@@ -180,7 +180,7 @@ class CategoryCreateView(TemplateView):
 
 
 def get_category_or_404(id):
-    category = get_object_or_404(Category, pk=id) # TODO: REDITRECT TO ERROR PAGE
+    category = get_object_or_404(Category, pk=id)
     return category
 
 
