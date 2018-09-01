@@ -11,7 +11,7 @@ class LoginForm(forms.Form):
 
 class SignupForm(UserCreationForm):
     class Meta:
-            fields = ['first_name', 'last_name', 'national_id', 'email', 'phone', 'username', 'post_code', 'state',
+            fields = ['username', 'first_name', 'last_name', 'national_id', 'email', 'phone', 'post_code', 'state',
                       'city', 'address']
             model = Account
 
