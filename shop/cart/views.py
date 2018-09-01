@@ -170,7 +170,7 @@ class AllCartsOfAccountView(TemplateView):
 
 def cart_belongs_to_user(request, cart):
     cart_account = cart.client
-    if cart_account is not None and request.user.id == cart_account .id:
+    if cart_account is not None and request.user.id == cart_account.id:
         return True
     return False
 
@@ -292,7 +292,7 @@ class DeleteFromCart(TemplateView):
             redirect_path = get_redirect_path(request)
             return redirect(redirect_path)
 
-        if cart_belongs_to_user(request, cart) or user_is_staff(request):
+        if cart_belongs_to_user(request, cart) or user_is_staff(request) or cart.client == None:
             if cart_item.cart == cart:
                 cart.total -= cart_item.count * cart_item.product.price
                 cart.save()
