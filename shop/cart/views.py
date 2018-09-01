@@ -331,7 +331,8 @@ class PayView(TemplateView):
             if result.Status == 100:
                 return redirect('https://www.zarinpal.com/pg/StartPay/' + str(result.Authority))
             else:
-                return HttpResponse('Error code: ' + str(result.Status))
+                messages.error(request, 'خطا در اتصال به صفحه پرداخت.')
+                return redirect('/home/')
         messages.error(request, 'دسترسی به این صفحه مجاز نیست.')
         return redirect('/home/')
 
