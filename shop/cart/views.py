@@ -312,7 +312,7 @@ class DeleteFromCart(TemplateView):
 
 from zeep import Client
 from django.shortcuts import redirect
-MERCHANT = 'e3cdd5aa-9d9b-11e8-922d-000c295eb8fc'
+MERCHANT = 'YOUR MERCHANT'
 # amount = 1000  # Toman / Required
 description = "توضیحات مربوط به تراکنش را در این قسمت وارد کنید."  # Required
 email = 'email@example.com'  # Optional
